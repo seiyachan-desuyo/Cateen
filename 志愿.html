@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银发记忆·时光守护者</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #e5e5e5; /* Darker bg for desktop view contrast */
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .serif {
+            font-family: 'Noto Serif SC', serif;
+        }
+        /* Hide scrollbar for clean UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 390px; /* iPhone 13/14 width */
+            height: 844px; /* iPhone 13/14 height */
+            background-color: #FFFCF5; /* Warm paper color */
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-radius: 40px; /* Rounded device corners */
+            border: 8px solid #333; /* Device Bezel */
+        }
+        
+        /* Mobile reset for full screen on actual mobile devices */
+        @media (max-width: 640px) {
+            body {
+                background-color: #FFFCF5;
+                align-items: flex-start;
+            }
+            .app-container {
+                max-width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+                box-shadow: none;
+            }
+        }
+
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 90px; /* Space for bottom nav */
+            position: relative;
+        }
+
+        /* Page Transitions */
+        .page {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .nav-active {
+            color: #C2410C;
+        }
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+
+        /* Custom Audio Player Styling */
+        .audio-wave {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 20px;
+        }
+        .bar {
+            width: 3px;
+            background-color: #C2410C;
+            border-radius: 2px;
+            animation: wave 1s infinite ease-in-out;
+        }
+        .bar:nth-child(2) { animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-delay: 0.2s; }
+        .bar:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes wave {
+            0%, 100% { height: 6px; opacity: 0.5; }
+            50% { height: 18px; opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Status Bar Simulation -->
+    <div class="h-10 w-full bg-[#C2410C] flex justify-between items-center px-6 text-white text-[10px] font-medium z-50 sticky top-0 shrink-0">
+        <span>9:41</span>
+        <div class="flex gap-1.5">
+            <i class="fas fa-signal"></i>
+            <i class="fas fa-wifi"></i>
+            <i class="fas fa-battery-full"></i>
+        </div>
+    </div>
+
+    <!-- Header (Dynamic) -->
+    <header id="header" class="bg-[#C2410C] text-white px-5 py-3 shadow-md z-40 transition-all duration-300 shrink-0 flex justify-between items-center h-16">
+        <!-- Default Header Content -->
+        <div id="header-default" class="w-full flex justify-between items-center">
+            <div>
+                <h1 class="text-lg font-bold serif tracking-wider">银发记忆</h1>
+                <p class="text-[10px] text-orange-100 opacity-90">时光守护者 · 代际陪伴</p>
+            </div>
+            <div class="flex gap-3">
+                <button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition backdrop-blur-sm"><i class="fas fa-search text-xs"></i></button>
+                <button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition backdrop-blur-sm relative">
+                    <i class="far fa-bell text-xs"></i>
+                    <div class="absolute top-1.5 right-2 w-1.5 h-1.5 bg-red-500 rounded-full border border-[#C2410C]"></div>
+                </button>
+            </div>
+        </div>
+        <!-- Detail Header Content (Hidden by default) -->
+        <div id="header-detail" class="w-full flex justify-between items-center hidden">
+            <button onclick="goBack()" class="w-8 h-8 flex items-center justify-center -ml-2"><i class="fas fa-chevron-left"></i></button>
+            <span id="header-title" class="font-bold text-sm truncate max-w-[200px]">详情</span>
+            <button class="w-8 h-8 flex items-center justify-center"><i class="fas fa-ellipsis-h"></i></button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="main-content" class="page-content no-scrollbar bg-[#FDFBF7]">
+        <!-- Content injected via JS -->
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav" class="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-100 px-6 py-2 flex justify-between items-end z-30 pb-6 text-[10px] text-gray-400 font-medium transition-transform duration-300">
+        <button onclick="router('home')" class="nav-item flex flex-col items-center gap-1 w-12 nav-active" id="nav-home">
+            <i class="fas fa-book-open text-xl mb-0.5"></i>
+            <span>记忆</span>
+        </button>
+        <button onclick="router('activity')" class="nav-item flex flex-col items-center gap-1 w-12" id="nav-activity">
+            <i class="fas fa-hands-helping text-xl mb-0.5"></i>
+            <span>志愿</span>
+        </button>
+        <button onclick="router('create')" class="nav-item flex flex-col items-center gap-1 -mb-4" id="nav-create">
+            <div class="bg-[#C2410C] text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-orange-200 transform active:scale-95 transition">
+                <i class="fas fa-plus text-lg"></i>
+            </div>
+            <span class="mt-1 font-bold text-[#C2410C] mb-4">共创</span>
+        </button>
+        <button onclick="router('community')" class="nav-item flex flex-col items-center gap-1 w-12" id="nav-community">
+            <i class="fas fa-comments text-xl mb-0.5"></i>
+            <span>社区</span>
+        </button>
+        <button onclick="router('profile')" class="nav-item flex flex-col items-center gap-1 w-12" id="nav-profile">
+            <i class="fas fa-user text-xl mb-0.5"></i>
+            <span>我的</span>
+        </button>
+    </nav>
+</div>
+
+<script>
+    // --- Data Models ---
+    const stories = [
+        {
+            id: 1,
+            title: "那年我在贸大教书的日子",
+            subtitle: "见证学校发展的关键节点",
+            category: "贸大记忆",
+            author: "李建国",
+            role: "退休教授",
+            date: "2024-05-20",
+            image: "https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            content: "1954年，我第一次踏入这所学校的大门。那时候的教学楼还没有现在这么气派，但学生们眼里的光，和现在是一样的...",
+            audioLength: "12:30",
+            tags: ["校史", "50年代", "教学"],
+            views: 1203,
+            likes: 156,
+            type: "audio"
+        },
+        {
+            id: 2,
+            title: "抗美援朝战场上的家书",
+            subtitle: "跨越70年的红色记忆",
+            category: "红色故事",
+            author: "张爱华",
+            role: "退伍老兵",
+            date: "2024-06-01",
+            image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            content: "这封信是我在战壕里写的，当时不知道能不能寄出去。信纸泛黄了，但那是我们那一代人的青春...",
+            tags: ["红色精神", "书信", "爱国"],
+            views: 3420,
+            likes: 420,
+            type: "video"
+        },
+        {
+            id: 3,
+            title: "芳华里养老院的第一个春节",
+            subtitle: "社区里的温暖瞬间",
+            category: "人生百态",
+            author: "芳华里老人",
+            role: "社区居民",
+            date: "2024-02-15",
+            image: "https://images.unsplash.com/photo-1516307365426-bea591f05011?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+            content: "今年春节，一群大学生来到这里，陪我们包饺子。热气腾腾的饺子，让我想起了小时候...",
+            tags: ["社区", "春节", "温暖"],
+            views: 856,
+            likes: 89,
+            type: "text"
+        }
+    ];
+
+    const activities = [
+        {
+            id: 1,
+            title: "【校内】探访退休教师李奶奶",
+            date: "10月15日 14:00-16:00",
+            location: "贸大家属院 3号楼",
+            type: "陪伴互动",
+            status: "招募中",
+            slots: "2/3",
+            description: "李奶奶是退休英语教师，喜欢阅读和园艺。本次活动主要内容是陪李奶奶聊天，协助整理书架。",
+            requirements: "有耐心，英语口语好优先"
+        },
+        {
+            id: 2,
+            title: "【校外】芳华里红色故事采访行动",
+            date: "10月20日 09:00-12:00",
+            location: "芳华里康养社区",
+            type: "采访记录",
+            status: "即将开始",
+            slots: "0/5",
+            description: "采访社区内的退伍老兵，记录他们的红色故事。需携带录音设备（团队提供）。",
+            requirements: "具备基本的采访技巧，会使用录音笔"
+        }
+    ];
+
+    // --- State & Router ---
+    let historyStack = [];
+
+    function router(pageId, params = null) {
+        const content = document.getElementById('main-content');
+        const headerDefault = document.getElementById('header-default');
+        const headerDetail = document.getElementById('header-detail');
+        const bottomNav = document.getElementById('bottom-nav');
+        const header = document.getElementById('header');
+
+        // Manage History
+        if(pageId !== 'back') {
+            historyStack.push({ pageId, params });
+        }
+        
+        // Handle Detail Views (Hide Nav, Show Back Button)
+        if (pageId.includes('detail')) {
+            bottomNav.style.transform = 'translateY(100%)'; // Slide down nav
+            headerDefault.classList.add('hidden');
+            headerDetail.classList.remove('hidden');
+            headerDetail.classList.add('flex');
+            
+            // Set header title
+            const titleEl = document.getElementById('header-title');
+            if(params && params.title) titleEl.innerText = params.title;
+            else titleEl.innerText = "详情";
+
+        } else {
+            bottomNav.style.transform = 'translateY(0)'; // Show nav
+            headerDefault.classList.remove('hidden');
+            headerDetail.classList.add('hidden');
+            headerDetail.classList.remove('flex');
+        }
+
+        // Render Page
+        let html = '';
+        let animationClass = pageId.includes('detail') ? 'slide-in-right' : 'page';
+
+        switch(pageId) {
+            case 'home': html = renderHome(); break;
+            case 'activity': html = renderActivity(); break;
+            case 'create': html = renderCreate(); break;
+            case 'community': html = renderCommunity(); break;
+            case 'profile': html = renderProfile(); break;
+            case 'story-detail': html = renderStoryDetail(params); break;
+            case 'activity-detail': html = renderActivityDetail(params); break;
+        }
+
+        content.innerHTML = `<div class="${animationClass}">${html}</div>`;
+        content.scrollTop = 0;
+
+        // Update Tab State (Only for main tabs)
+        if (!pageId.includes('detail')) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('nav-active', 'text-[#C2410C]');
+                if(el.id !== 'nav-create') el.classList.add('text-gray-400');
+            });
+            const activeNav = document.getElementById('nav-' + pageId);
+            if(activeNav && pageId !== 'create') {
+                activeNav.classList.add('nav-active', 'text-[#C2410C]');
+                activeNav.classList.remove('text-gray-400');
+            }
+        }
+    }
+
+    function goBack() {
+        historyStack.pop(); // Remove current
+        const prev = historyStack.pop(); // Get previous
+        if(prev) {
+            router(prev.pageId, prev.params);
+        } else {
+            router('home');
+        }
+    }
+
+    // --- Render Functions ---
+
+    function renderHome() {
+        return `
+            <!-- Categories -->
+            <div class="px-5 pt-6 pb-2">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-gray-800 serif">记忆分类</h2>
+                    <a href="#" class="text-xs text-[#C2410C]">查看全部 <i class="fas fa-chevron-right text-[10px]"></i></a>
+                </div>
+                <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                    ${['贸大\n记忆', '红色\n故事', '人生\n百态'].map((title, i) => `
+                    <div class="flex-shrink-0 w-24 h-32 rounded-2xl relative overflow-hidden shadow-sm group cursor-pointer transform hover:scale-105 transition duration-300">
+                        <img src="https://images.unsplash.com/photo-${[
+                            '1524178232363-1fb2b075b655', 
+                            '1533552039-389369d4bc4d', 
+                            '1511632765486-a01980e01a18'
+                        ][i]}?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-center pb-4">
+                            <span class="text-white font-bold text-sm tracking-widest text-center whitespace-pre-line leading-tight shadow-sm">${title}</span>
+                        </div>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- Featured Feed -->
+            <div class="px-5 py-2">
+                <div class="flex justify-between items-end mb-4">
+                    <h2 class="text-lg font-bold text-gray-800 serif">精选推荐</h2>
+                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">每日更新</span>
+                </div>
+                
+                <div class="space-y-6 pb-24">
+                    ${stories.map(story => `
+                    <div onclick="router('story-detail', {id: ${story.id}})" class="bg-white rounded-2xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] overflow-hidden active:scale-[0.98] transition-transform duration-200 cursor-pointer group">
+                        <div class="relative h-44 overflow-hidden">
+                            <img src="${story.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                            <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-[10px] px-2.5 py-1 rounded-lg font-bold text-gray-700 shadow-sm border border-white/50">
+                                ${story.category}
+                            </div>
+                            ${story.type === 'audio' ? `
+                            <div class="absolute bottom-3 right-3 bg-black/40 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[10px] flex items-center gap-2 border border-white/10">
+                                <div class="audio-wave scale-75">
+                                    <div class="bar bg-white"></div><div class="bar bg-white"></div><div class="bar bg-white"></div>
+                                </div>
+                                12:30
+                            </div>` : ''}
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-800 text-base mb-1 line-clamp-1">${story.title}</h3>
+                            <p class="text-xs text-gray-500 mb-3 line-clamp-1">${story.subtitle}</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-[10px] font-bold">
+                                        ${story.author.charAt(0)}
+                                    </div>
+                                    <span class="text-xs text-gray-500">${story.author} · ${story.role}</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-gray-400 text-[10px]">
+                                    <span><i class="far fa-eye mr-1"></i>${story.views}</span>
+                                    <span><i class="far fa-heart mr-1"></i>${story.likes}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderStoryDetail(params) {
+        const story = stories.find(s => s.id === params.id) || stories[0];
+        
+        // Update header title for context
+        setTimeout(() => {
+             document.getElementById('header-title').innerText = story.category;
+        }, 0);
+
+        return `
+            <div class="bg-white min-h-full pb-10">
+                <!-- Hero Image -->
+                <div class="relative h-64">
+                    <img src="${story.image}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
+                </div>
+                
+                <div class="px-6 -mt-12 relative z-10">
+                    <!-- Title Section -->
+                    <div class="mb-6">
+                        <div class="flex items-center gap-2 mb-2">
+                             <span class="bg-[#C2410C]/10 text-[#C2410C] px-2 py-0.5 rounded text-[10px] font-bold border border-[#C2410C]/20">${story.category}</span>
+                             <span class="text-gray-400 text-[10px]">${story.date}</span>
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-900 serif leading-tight mb-2">${story.title}</h1>
+                        <p class="text-sm text-gray-500">${story.subtitle}</p>
+                    </div>
+
+                    <!-- Author Bar -->
+                    <div class="flex items-center justify-between py-4 border-y border-gray-100 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                                <img src="https://api.dicebear.com/7.x/miniavs/svg?seed=${story.author}" class="w-full h-full">
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-gray-800">${story.author}</div>
+                                <div class="text-[10px] text-gray-500">${story.role}</div>
+                            </div>
+                        </div>
+                        <button class="bg-[#C2410C] text-white text-xs px-4 py-1.5 rounded-full shadow-md shadow-orange-200">关注</button>
+                    </div>
+
+                    <!-- Audio Player (If Audio) -->
+                    ${story.type === 'audio' ? `
+                    <div class="bg-[#FDFBF7] p-4 rounded-xl border border-orange-100 mb-6 flex items-center gap-4 shadow-sm">
+                        <button class="w-10 h-10 rounded-full bg-[#C2410C] text-white flex items-center justify-center shrink-0 shadow-md">
+                            <i class="fas fa-play ml-1 text-sm"></i>
+                        </button>
+                        <div class="flex-1">
+                            <div class="text-xs font-bold text-gray-800 mb-1">口述历史录音</div>
+                            <div class="h-1 bg-gray-200 rounded-full w-full overflow-hidden">
+                                <div class="h-full bg-[#C2410C] w-1/3"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+                                <span>04:12</span>
+                                <span>${story.audioLength}</span>
+                            </div>
+                        </div>
+                    </div>` : ''}
+
+                    <!-- Content -->
+                    <div class="prose prose-sm prose-orange text-gray-700 leading-relaxed mb-8 font-light">
+                        <p class="mb-4"><span class="text-3xl float-left mr-2 font-serif text-[#C2410C]">“</span>${story.content}</p>
+                        <p class="mb-4">那时候的日子很慢，车，马，邮件都慢。我们总是聚在一起，讨论国家大事，讨论如何把课上好。现在的年轻人条件好了，但我希望你们不要忘记那段艰苦奋斗的历史。</p>
+                        <p>记得有一次冬天，教室里没有暖气，大家手都冻僵了，但没有一个人退缩...</p>
+                    </div>
+
+                    <!-- Interaction Bar -->
+                    <div class="flex justify-center gap-8 py-6">
+                        <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-[#C2410C] transition">
+                            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-xl shadow-sm"><i class="far fa-heart"></i></div>
+                            <span class="text-xs">${story.likes}</span>
+                        </button>
+                        <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-blue-500 transition">
+                            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-xl shadow-sm"><i class="far fa-comment-dots"></i></div>
+                            <span class="text-xs">24</span>
+                        </button>
+                        <button class="flex flex-col items-center gap-1 text-gray-400 hover:text-green-500 transition">
+                            <div class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-xl shadow-sm"><i class="fab fa-weixin"></i></div>
+                            <span class="text-xs">分享</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderActivity() {
+        return `
+            <div class="px-5 py-6">
+                <!-- Dashboard -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm mb-6 border border-gray-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-gray-800 text-sm">我的志愿数据</h3>
+                        <span class="text-[10px] text-gray-400">更新于今日</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <div class="text-xl font-bold text-[#C2410C] serif">12.5</div>
+                            <div class="text-[10px] text-gray-500 mt-1">服务时长(h)</div>
+                        </div>
+                        <div class="text-center border-l border-gray-100">
+                            <div class="text-xl font-bold text-[#C2410C] serif">3</div>
+                            <div class="text-[10px] text-gray-500 mt-1">参与活动</div>
+                        </div>
+                        <div class="text-center border-l border-gray-100">
+                            <div class="text-xl font-bold text-[#C2410C] serif">LV.2</div>
+                            <div class="text-[10px] text-gray-500 mt-1">青铜志愿者</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mb-4 px-1">
+                    <h2 class="text-lg font-bold text-gray-800 serif border-l-4 border-[#C2410C] pl-3">活动招募</h2>
+                    <div class="flex gap-2">
+                         <span class="text-xs px-2 py-1 bg-[#C2410C] text-white rounded-lg">全部</span>
+                         <span class="text-xs px-2 py-1 bg-white text-gray-500 rounded-lg shadow-sm">校内</span>
+                         <span class="text-xs px-2 py-1 bg-white text-gray-500 rounded-lg shadow-sm">校外</span>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 pb-20">
+                    ${activities.map(act => `
+                    <div onclick="router('activity-detail', {id: ${act.id}, title: '活动详情'})" class="bg-white p-4 rounded-xl shadow-[0_2px_15px_-5px_rgba(0,0,0,0.05)] relative overflow-hidden active:scale-[0.99] transition-transform cursor-pointer border border-gray-50">
+                        <div class="absolute top-0 right-0 bg-${act.status === '招募中' ? 'green' : 'gray'}-50 text-${act.status === '招募中' ? 'green' : 'gray'}-600 text-[10px] px-3 py-1.5 rounded-bl-xl font-bold tracking-wide">
+                            ${act.status}
+                        </div>
+                        <div class="flex gap-4 mb-3">
+                            <div class="w-14 h-14 rounded-xl bg-gradient-to-br ${act.type === '陪伴互动' ? 'from-orange-100 to-amber-50 text-orange-600' : 'from-blue-50 to-indigo-50 text-blue-600'} flex items-center justify-center flex-shrink-0 shadow-inner">
+                                <i class="fas ${act.type === '陪伴互动' ? 'fa-user-friends' : 'fa-microphone-alt'} text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-800 text-sm mb-1.5 pr-12">${act.title}</h3>
+                                <div class="flex flex-col gap-1 text-[11px] text-gray-500">
+                                    <span class="flex items-center gap-1.5"><i class="far fa-calendar-alt text-gray-400 w-3"></i>${act.date}</span>
+                                    <span class="flex items-center gap-1.5"><i class="fas fa-map-marker-alt text-gray-400 w-3"></i>${act.location}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-3 pt-3 border-t border-dashed border-gray-100">
+                             <span class="bg-gray-50 text-gray-500 px-2 py-0.5 rounded text-[10px]">${act.type}</span>
+                            <div class="flex items-center gap-2">
+                                <div class="text-xs text-gray-400">名额 <span class="text-[#C2410C] font-bold">${act.slots}</span></div>
+                                <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderActivityDetail(params) {
+        const act = activities.find(a => a.id === params.id) || activities[0];
+        return `
+            <div class="min-h-full bg-white pb-24">
+                <!-- Map Placeholder -->
+                <div class="h-48 bg-gray-100 relative w-full overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover opacity-80">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="bg-white/90 backdrop-blur px-4 py-2 rounded-lg shadow-sm text-xs font-bold text-gray-600 flex items-center gap-2">
+                            <i class="fas fa-map-marker-alt text-[#C2410C]"></i> ${act.location}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 py-6 rounded-t-3xl bg-white -mt-6 relative z-10 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+                    <div class="flex justify-between items-start mb-4">
+                        <h1 class="text-xl font-bold text-gray-900 w-3/4">${act.title}</h1>
+                        <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold">${act.status}</span>
+                    </div>
+
+                    <!-- Info Grid -->
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <div class="text-[10px] text-gray-400 mb-1">活动时间</div>
+                            <div class="text-xs font-bold text-gray-800">${act.date}</div>
+                        </div>
+                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            <div class="text-[10px] text-gray-400 mb-1">志愿类型</div>
+                            <div class="text-xs font-bold text-gray-800">${act.type}</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-sm mb-2 border-l-4 border-[#C2410C] pl-2">活动简介</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">${act.description}</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-sm mb-2 border-l-4 border-[#C2410C] pl-2">志愿者要求</h3>
+                            <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                                <li>${act.requirements}</li>
+                                <li>能够准时参加培训和活动</li>
+                                <li>尊重老人，保护隐私</li>
+                            </ul>
+                        </div>
+                         <div>
+                            <h3 class="font-bold text-gray-800 text-sm mb-2 border-l-4 border-[#C2410C] pl-2">负责人</h3>
+                            <div class="flex items-center gap-3 bg-white p-3 border border-gray-100 rounded-xl shadow-sm">
+                                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold">于</div>
+                                <div>
+                                    <div class="text-sm font-bold">于妍肖</div>
+                                    <div class="text-[10px] text-gray-400">活动执行负责人</div>
+                                </div>
+                                <button class="ml-auto w-8 h-8 rounded-full bg-green-50 text-green-600 flex items-center justify-center"><i class="fas fa-phone-alt text-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Bottom Bar -->
+                <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 pb-8 z-50 flex items-center gap-4 max-w-[390px] mx-auto">
+                    <div class="text-center w-12 shrink-0">
+                        <div class="text-xs text-gray-400">名额</div>
+                        <div class="text-sm font-bold text-[#C2410C]">${act.slots}</div>
+                    </div>
+                    <button class="flex-1 bg-[#C2410C] text-white py-3 rounded-xl font-bold shadow-lg shadow-orange-200 active:scale-95 transition">立即报名</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderCreate() {
+        return `
+            <div class="px-5 py-8 flex flex-col items-center justify-center h-full">
+                <div class="w-full bg-white rounded-3xl shadow-lg p-6 border border-gray-50 text-center mb-6">
+                    <div class="w-16 h-16 bg-orange-50 text-[#C2410C] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                        <i class="fas fa-microphone-alt"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">记录此刻</h2>
+                    <p class="text-xs text-gray-400 mb-6">选择一种方式，留存珍贵记忆</p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <button class="p-4 rounded-xl border border-gray-100 hover:border-[#C2410C] hover:bg-orange-50 transition group flex flex-col items-center gap-2">
+                             <i class="fas fa-pen-nib text-gray-400 group-hover:text-[#C2410C]"></i>
+                             <span class="text-xs font-bold text-gray-600 group-hover:text-[#C2410C]">写故事</span>
+                        </button>
+                        <button class="p-4 rounded-xl border border-gray-100 hover:border-[#C2410C] hover:bg-orange-50 transition group flex flex-col items-center gap-2">
+                             <i class="fas fa-camera text-gray-400 group-hover:text-[#C2410C]"></i>
+                             <span class="text-xs font-bold text-gray-600 group-hover:text-[#C2410C]">拍视频</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <h3 class="text-sm font-bold text-gray-400 mb-4">热门话题</h3>
+                <div class="w-full space-y-3">
+                    <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center">
+                        <span class="text-sm font-bold text-gray-700"># 我眼中的贸大变迁</span>
+                        <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm flex justify-between items-center">
+                        <span class="text-sm font-bold text-gray-700"># 爷爷的军功章</span>
+                        <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderCommunity() {
+        return `
+            <div class="px-5 py-6">
+                <!-- Tabs -->
+                <div class="flex gap-6 border-b border-gray-200 mb-6">
+                    <button class="pb-2 border-b-2 border-[#C2410C] font-bold text-[#C2410C] text-sm">推荐</button>
+                    <button class="pb-2 border-b-2 border-transparent text-gray-400 text-sm">关注</button>
+                    <button class="pb-2 border-b-2 border-transparent text-gray-400 text-sm">同城</button>
+                </div>
+
+                <!-- Feed -->
+                <div class="space-y-6">
+                    <!-- Post 1 -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-50">
+                        <div class="flex items-center justify-between mb-3">
+                             <div class="flex items-center gap-2">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-8 h-8 rounded-full bg-gray-100">
+                                <div>
+                                    <div class="text-xs font-bold text-gray-800">王筱涵</div>
+                                    <div class="text-[10px] text-gray-400">2小时前</div>
+                                </div>
+                            </div>
+                            <button class="text-gray-300"><i class="fas fa-ellipsis-h"></i></button>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-3 leading-relaxed">听了李教授的讲述，深受触动。作为金融学院的学生，很难想象当年老师们是在怎样的环境下坚持治学的。</p>
+                        <div class="bg-gray-50 p-2 rounded-lg mb-3 flex items-center gap-3 border border-gray-100">
+                             <div class="w-10 h-10 rounded bg-gray-200 overflow-hidden shrink-0">
+                                <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" class="w-full h-full object-cover">
+                             </div>
+                             <div class="flex-1">
+                                 <div class="text-xs font-bold text-gray-800 line-clamp-1">那年我在贸大教书的日子</div>
+                                 <div class="text-[10px] text-gray-400">李建国 · 贸大记忆</div>
+                             </div>
+                        </div>
+                        <div class="flex items-center justify-between text-gray-400 text-xs px-2">
+                            <button class="flex items-center gap-1 hover:text-red-500"><i class="far fa-heart"></i> 24</button>
+                            <button class="flex items-center gap-1 hover:text-blue-500"><i class="far fa-comment"></i> 5</button>
+                            <button class="flex items-center gap-1 hover:text-green-500"><i class="fas fa-share"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Post 2 -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-50">
+                        <div class="flex items-center justify-between mb-3">
+                             <div class="flex items-center gap-2">
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Annie" class="w-8 h-8 rounded-full bg-gray-100">
+                                <div>
+                                    <div class="text-xs font-bold text-gray-800">张诗棋</div>
+                                    <div class="text-[10px] text-gray-400">5小时前</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-700 mb-3">今天去芳华里采访了张奶奶，她描述的那个年代的旗袍真美，回来凭印象画了一张，送给奶奶！🎨</p>
+                        <div class="w-full h-48 rounded-xl overflow-hidden mb-3 relative group cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1582201334538-316cb11b9132?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                                <i class="fas fa-search-plus"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-gray-400 text-xs px-2">
+                            <button class="flex items-center gap-1 hover:text-red-500"><i class="far fa-heart"></i> 56</button>
+                            <button class="flex items-center gap-1 hover:text-blue-500"><i class="far fa-comment"></i> 12</button>
+                            <button class="flex items-center gap-1 hover:text-green-500"><i class="fas fa-share"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderProfile() {
+        return `
+             <div class="relative">
+                <!-- Header Background -->
+                <div class="bg-gradient-to-b from-[#C2410C] to-[#E65100] h-40 rounded-b-[2.5rem] relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                </div>
+                
+                <!-- Profile Card -->
+                <div class="px-5 -mt-20">
+                    <div class="bg-white rounded-2xl shadow-lg shadow-orange-900/10 p-5 text-center relative z-10">
+                        <div class="relative w-20 h-20 mx-auto -mt-14 mb-3">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" class="w-full h-full rounded-full border-4 border-white shadow-md bg-white">
+                            <div class="absolute bottom-0 right-0 bg-yellow-400 text-white text-[10px] px-1.5 py-0.5 rounded-full border border-white font-bold shadow-sm">VIP</div>
+                        </div>
+                        <h2 class="text-lg font-bold text-gray-800">王筱涵</h2>
+                        <p class="text-xs text-gray-500 mb-4 flex items-center justify-center gap-1">
+                            <i class="fas fa-graduation-cap text-gray-300"></i> 中国金融学院 · 2023级
+                        </p>
+                        
+                        <div class="flex justify-center gap-8 border-t border-gray-100 pt-4">
+                            <div class="text-center group cursor-pointer">
+                                <div class="font-bold text-gray-800 group-hover:text-[#C2410C] transition">12.5h</div>
+                                <div class="text-[10px] text-gray-400">志愿时长</div>
+                            </div>
+                            <div class="text-center group cursor-pointer">
+                                <div class="font-bold text-gray-800 group-hover:text-[#C2410C] transition">5</div>
+                                <div class="text-[10px] text-gray-400">发布故事</div>
+                            </div>
+                            <div class="text-center group cursor-pointer">
+                                <div class="font-bold text-gray-800 group-hover:text-[#C2410C] transition">128</div>
+                                <div class="text-[10px] text-gray-400">获赞</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Menu -->
+                <div class="px-5 py-6 space-y-4">
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-50">
+                        <div class="flex items-center justify-between p-4 border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-orange-50 flex items-center justify-center text-[#C2410C] shadow-sm"><i class="fas fa-id-card-alt text-sm"></i></div>
+                                <span class="text-sm text-gray-700 font-bold">我的志愿档案</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                        </div>
+                         <div class="flex items-center justify-between p-4 border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 shadow-sm"><i class="fas fa-folder-open text-sm"></i></div>
+                                <span class="text-sm text-gray-700 font-bold">我的作品集</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                        </div>
+                        <div class="flex items-center justify-between p-4 hover:bg-gray-50 transition cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 shadow-sm"><i class="fas fa-star text-sm"></i></div>
+                                <span class="text-sm text-gray-700 font-bold">收藏的故事</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-50">
+                         <div class="flex items-center justify-between p-4 border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-green-50 flex items-center justify-center text-green-500 shadow-sm"><i class="fas fa-cog text-sm"></i></div>
+                                <span class="text-sm text-gray-700 font-bold">设置</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                        </div>
+                         <div class="flex items-center justify-between p-4 hover:bg-gray-50 transition cursor-pointer">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-gray-500 shadow-sm"><i class="fas fa-info-circle text-sm"></i></div>
+                                <span class="text-sm text-gray-700 font-bold">关于银发记忆</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+        router('home');
+    });
+
+</script>
+</body>
+</html>

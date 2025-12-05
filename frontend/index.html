@@ -3,92 +3,522 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Cateat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐱 贸小饭 - 吃好喝好睡好每一天！</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  
+  <!-- Google Fonts - 字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            peach: '#FFB4A2',
+            coral: '#FF8C69',
+            tangerine: '#FF6B45',
+            cream: '#FFF5E1',
+            softPink: '#FFE4E1',
+            warmOrange: '#FFA07A',
+          },
+          fontFamily: {
+            'sans': ['Quicksand', 'Noto Sans SC', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 40px;
+      font-family: 'Quicksand', 'Noto Sans SC', sans-serif;
+      background: linear-gradient(135deg, #FFE4E1 0%, #FFF5E1 50%, #FFE4D6 100%);
+      background-attachment: fixed;
     }
 
-    #chatbox {
-      width: 100%;
-      height: 300px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      overflow-y: auto;
-      margin-bottom: 10px;
+    /* 滚动条 */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #FFE4E1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #FF8C69;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #FF6B45;
     }
 
-    #user-input {
-      width: 80%;
-      padding: 8px;
+    /* 消息气泡动画 */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    #send-btn {
-      padding: 8px 16px;
+    .message-bubble {
+      animation: slideIn 0.3s ease-out;
     }
 
-    .ai {
-      color: #0074d9;
-      margin: 5px 0;
+    /* 悬浮动画 */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
     }
 
-    .user {
-      color: #333;
-      margin: 5px 0;
-      text-align: right;
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* 脉搏动画 */
+    @keyframes pulse-soft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .pulse-soft {
+      animation: pulse-soft 2s ease-in-out infinite;
+    }
+
+    /* 渐变文字 */
+    .gradient-text {
+      background: linear-gradient(90deg, #FF6B45, #FF8C69, #FFB4A2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* 食物表情符号旋转 */
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .spin-slow {
+      animation: spin-slow 20s linear infinite;
+    }
+
+    /* 左侧面板高度 */
+    .left-panel {
+      height: calc(100vh - 2rem);
+    }
+
+    /* 右侧聊天区域 */
+    .chat-panel {
+      height: calc(100vh - 2rem);
+      display: flex;
+      flex-direction: column;
     }
   </style>
 </head>
 
-<body>
-  <h2>猫大食堂</h2>
-  <div id="chatbox"></div>
-  <input type="text" id="user-input" placeholder="请输入内容...">
-  <button id="send-btn">发送</button>
+<body class="min-h-screen p-4">
+  
+  <!-- 主容器 - 左右布局 -->
+  <div class="w-full h-full flex gap-6 max-w-[1600px] mx-auto">
+    
+    <!-- 左侧面板 - 品牌信息和美食展示 -->
+    <div class="w-[400px] left-panel flex flex-col gap-6">
+      
+      <!-- 品牌标题卡片 -->
+      <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border-4 border-coral/30 relative overflow-hidden">
+        <!-- 背景装饰 -->
+        <div class="absolute -top-10 -right-10 text-9xl opacity-10">🐱</div>
+        <div class="absolute -bottom-10 -left-10 text-9xl opacity-10">🍜</div>
+        
+        <div class="relative z-10">
+          <div class="flex items-center justify-center gap-3 mb-4">
+            <div class="text-7xl pulse-soft">🐱</div>
+          </div>
+          <h1 class="text-5xl font-bold gradient-text mb-3 tracking-wide text-center">贸小饭Cateen</h1>
+          <p class="text-coral font-semibold text-lg text-center flex items-center justify-center gap-2 mb-4">
+            <i class="fas fa-sparkles"></i>
+            对外经贸食堂智能美食推荐系统
+            <i class="fas fa-sparkles"></i>
+          </p>
+          
+          <!-- 装饰性标签 -->
+          <div class="space-y-2">
+            <div class="bg-gradient-to-r from-coral to-tangerine text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
+              <i class="fas fa-robot text-xl"></i>
+              <span>AI智能推荐系统</span>
+            </div>
+            <div class="bg-gradient-to-r from-peach to-warmOrange text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
+              <i class="fas fa-heart text-xl"></i>
+              <span>贴心美食管家</span>
+            </div>
+            <div class="bg-gradient-to-r from-tangerine to-coral text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
+              <i class="fas fa-utensils text-xl"></i>
+              <span>你想吃啥我都帮你找</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 美食展示卡片 -->
+      <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border-4 border-peach/30 flex-1 overflow-hidden">
+        <h3 class="text-2xl font-bold text-coral mb-4 flex items-center gap-2">
+          <i class="fas fa-fire"></i>
+          今日推荐
+        </h3>
+        
+        <div class="space-y-4 overflow-y-auto h-[calc(100%-3rem)]">
+          <!-- 美食卡片1 -->
+          <div class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105">
+            <div class="flex items-start gap-4">
+              <div class="text-5xl float-animation">🍱</div>
+              <div class="flex-1">
+                <h4 class="font-bold text-gray-800 text-lg mb-1">一食堂三楼状元套餐</h4>
+                <p class="text-sm text-gray-600 mb-2">精选时令食材,营养均衡</p>
+                <div class="flex items-center justify-between">
+                  <span class="text-coral font-bold text-xl">¥16</span>
+                  <div class="flex gap-1 text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 美食卡片2 -->
+          <div class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105" style="animation-delay: 0.1s;">
+            <div class="flex items-start gap-4">
+              <div class="text-5xl float-animation" style="animation-delay: 0.5s;">🍜</div>
+              <div class="flex-1">
+                <h4 class="font-bold text-gray-800 text-lg mb-1">一食堂一楼麻辣牛肉面</h4>
+                <p class="text-sm text-gray-600 mb-2">浓郁汤底,Q弹面条</p>
+                <div class="flex items-center justify-between">
+                  <span class="text-coral font-bold text-xl">¥14</span>
+                  <div class="flex gap-1 text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 美食卡片3 -->
+          <div class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105" style="animation-delay: 0.2s;">
+            <div class="flex items-start gap-4">
+              <div class="text-5xl float-animation" style="animation-delay: 1s;">🍙</div>
+              <div class="flex-1">
+                <h4 class="font-bold text-gray-800 text-lg mb-1">物美超市饭团</h4>
+                <p class="text-sm text-gray-600 mb-2">多种口味,便捷美味</p>
+                <div class="flex items-center justify-between">
+                  <span class="text-coral font-bold text-xl">¥6</span>
+                  <div class="flex gap-1 text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="far fa-star"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 美食卡片4 -->
+          <div class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105" style="animation-delay: 0.3s;">
+            <div class="flex items-start gap-4">
+              <div class="text-5xl float-animation" style="animation-delay: 1.5s;">🍰</div>
+              <div class="flex-1">
+                <h4 class="font-bold text-gray-800 text-lg mb-1">二食堂甜品店</h4>
+                <p class="text-sm text-gray-600 mb-2">治愈系下午茶</p>
+                <div class="flex items-center justify-between">
+                  <span class="text-coral font-bold text-xl">¥18</span>
+                  <div class="flex gap-1 text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 装饰元素 -->
+          <div class="text-center py-6 space-y-2">
+            <div class="text-4xl opacity-30 spin-slow">🐾</div>
+            <p class="text-coral/60 text-sm font-medium">更多美味等你发现喵~</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 底部装饰 -->
+      <div class="text-center text-coral/60 text-sm font-medium">
+        <p class="flex items-center justify-center gap-2">
+          <i class="fas fa-heart text-red-400"></i>
+          让美食温暖每一天
+          <i class="fas fa-heart text-red-400"></i>
+        </p>
+      </div>
+    </div>
+
+    <!-- 右侧聊天面板 -->
+    <div class="flex-1 chat-panel">
+      <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border-4 border-peach/30 h-full flex flex-col">
+        
+        <!-- 聊天头部 -->
+        <div class="bg-gradient-to-r from-coral via-tangerine to-warmOrange p-6 text-white flex-shrink-0">
+          <div class="flex items-center gap-4">
+            <div class="relative">
+              <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-4xl shadow-lg">
+                🐱
+              </div>
+              <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-2xl font-bold flex items-center gap-2">
+                贸小饭
+                <i class="fas fa-certificate text-yellow-300 text-sm"></i>
+              </h3>
+              <p class="text-white/90 text-sm flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></span>
+                在线 · 随时为您服务喵~
+              </p>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl">🍱</div>
+              <div class="text-xs mt-1 bg-white/20 px-3 py-1 rounded-full">美食专家</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 聊天消息区域 -->
+        <div id="chatbox" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-cream/30 to-softPink/20">
+          <!-- 消息将在这里动态生成 -->
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="p-6 bg-gradient-to-r from-softPink/30 to-cream/30 border-t-2 border-peach/20 flex-shrink-0">
+          <div class="flex gap-3 mb-4">
+            <div class="flex-1 relative">
+              <input 
+                type="text" 
+                id="user-input" 
+                placeholder="告诉贸小饭您想吃什么呢... 🍜✨"
+                class="w-full px-6 py-4 rounded-2xl border-2 border-coral/30 focus:border-coral focus:outline-none focus:ring-4 focus:ring-coral/20 text-gray-700 font-medium shadow-md bg-white/90 backdrop-blur-sm transition-all"
+              >
+              <div class="absolute right-4 top-1/2 -translate-y-1/2 text-coral/40">
+                <i class="fas fa-comment-dots"></i>
+              </div>
+            </div>
+            <button 
+              id="send-btn"
+              class="px-8 py-4 bg-gradient-to-r from-coral to-tangerine text-white rounded-2xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2"
+            >
+              <i class="fas fa-paper-plane"></i>
+              <span>发送</span>
+            </button>
+          </div>
+          
+          <!-- 快捷建议按钮 -->
+          <div class="flex gap-2 flex-wrap">
+            <button class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
+              <i class="fas fa-fire"></i> 推荐今日特色
+            </button>
+            <button class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
+              <i class="fas fa-leaf"></i> 健康轻食
+            </button>
+            <button class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
+              <i class="fas fa-dollar-sign"></i> 预算友好
+            </button>
+            <button class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
+              <i class="fas fa-bolt"></i> 快速简餐
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const chatbox = document.getElementById('chatbox');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
+  // 将硬编码的 localhost 改为动态获取
+const API_BASE_URL = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+  ? 'http://localhost:5000'  // 开发环境
+  : '';  // 生产环境使用相对路径
 
-    // 初始化对话，AI先发起
-    fetch('http://localhost:5000/init')
-      .then(res => res.json())
-      .then(data => {
-        appendMessage('ai', data.reply);
-      });
+const chatbox = document.getElementById('chatbox');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const quickSuggestions = document.querySelectorAll('.quick-suggestion');
 
-    sendBtn.onclick = sendMessage;
-    userInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') sendMessage();
+// 初始化对话，AI先发起
+fetch(`${API_BASE_URL}/init`)
+  .then(res => {
+    if (!res.ok) throw new Error('网络错误');
+    return res.json();
+  })
+  .then(data => {
+    appendMessage('ai', data.reply);
+  })
+  .catch(error => {
+    console.error('初始化错误:', error);
+    appendMessage('ai', '喵~ 你好呀!我是贸小饭,今天想吃点什么呢?�✨');
+  });
+
+sendBtn.onclick = sendMessage;
+userInput.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') sendMessage();
+});
+
+// 快捷建议按钮
+quickSuggestions.forEach(btn => {
+  btn.addEventListener('click', function() {
+    const text = this.textContent.trim().replace(/\s+/g, ' ');
+    userInput.value = text;
+    sendMessage();
+  });
+});
+
+function appendMessage(role, text) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message-bubble flex ${role === 'ai' ? 'justify-start' : 'justify-end'} mb-4`;
+  
+  // 转义HTML防止XSS攻击
+  const escapeHtml = (unsafe) => {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;")
+      .replace(/\n/g, "<br>");  // 保留换行
+  };
+  
+  const safeText = escapeHtml(text);
+  const currentTime = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
+  
+  if (role === 'ai') {
+    messageDiv.innerHTML = `
+      <div class="flex gap-3 max-w-[80%]">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-coral to-tangerine flex items-center justify-center text-xl shadow-lg flex-shrink-0">
+          �
+        </div>
+        <div class="bg-white rounded-2xl rounded-tl-none p-4 shadow-lg border-2 border-coral/20">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-coral font-bold text-sm">贸小饭</span>
+            <i class="fas fa-check-circle text-green-500 text-xs"></i>
+          </div>
+          <p class="text-gray-700 leading-relaxed">${safeText}</p>
+          <div class="flex gap-2 mt-2 text-xs text-gray-400">
+            <span><i class="far fa-clock"></i> ${currentTime}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    messageDiv.innerHTML = `
+      <div class="flex gap-3 max-w-[80%] flex-row-reverse">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-xl shadow-lg flex-shrink-0">
+          😊
+        </div>
+        <div class="bg-gradient-to-r from-coral to-tangerine text-white rounded-2xl rounded-tr-none p-4 shadow-lg">
+          <p class="leading-relaxed">${safeText}</p>
+          <div class="flex gap-2 mt-2 text-xs text-white/70 justify-end">
+            <span><i class="far fa-clock"></i> ${currentTime}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  chatbox.appendChild(messageDiv);
+  chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function sendMessage() {
+  const message = userInput.value.trim();
+  if (!message) return;
+  
+  appendMessage('user', message);
+  userInput.value = '';
+  
+  // 禁用发送按钮防止重复发送
+  sendBtn.disabled = true;
+  sendBtn.style.opacity = '0.6';
+  
+  // 显示打字中提示
+  const typingDiv = document.createElement('div');
+  typingDiv.id = 'typing-indicator';
+  typingDiv.className = 'flex gap-3 mb-4';
+  typingDiv.innerHTML = `
+    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-coral to-tangerine flex items-center justify-center text-xl shadow-lg">
+      �
+    </div>
+    <div class="bg-white rounded-2xl rounded-tl-none p-4 shadow-lg border-2 border-coral/20">
+      <div class="flex gap-1">
+        <div class="w-2 h-2 bg-coral rounded-full animate-bounce"></div>
+        <div class="w-2 h-2 bg-coral rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+        <div class="w-2 h-2 bg-coral rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+      </div>
+    </div>
+  `;
+  chatbox.appendChild(typingDiv);
+  chatbox.scrollTop = chatbox.scrollHeight;
+  
+  fetch(`${API_BASE_URL}/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message })
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('请求失败');
+      return res.json();
+    })
+    .then(data => {
+      const typing = document.getElementById('typing-indicator');
+      if (typing) typing.remove();
+      appendMessage('ai', data.reply);
+    })
+    .catch(error => {
+      console.error('发送消息错误:', error);
+      const typing = document.getElementById('typing-indicator');
+      if (typing) typing.remove();
+      appendMessage('ai', '喵~ 抱歉,我现在有点忙不过来了,请稍后再试试吧~ 🙇‍♀️');
+    })
+    .finally(() => {
+      // 恢复发送按钮
+      sendBtn.disabled = false;
+      sendBtn.style.opacity = '1';
     });
+}
 
-    function appendMessage(role, text) {
-      const div = document.createElement('div');
-      div.className = role;
-      div.textContent = (role === 'ai' ? 'AI: ' : '我: ') + text;
-      chatbox.appendChild(div);
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
+// 添加输入框焦点效果
+userInput.addEventListener('focus', function() {
+  this.parentElement.classList.add('ring-4', 'ring-coral/20');
+});
 
-    function sendMessage() {
-      const message = userInput.value.trim();
-      if (!message) return;
-      appendMessage('user', message);
-      userInput.value = '';
-      fetch('http://localhost:5000/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message })
-      })
-        .then(res => res.json())
-        .then(data => {
-          appendMessage('ai', data.reply);
-        })
-        .catch(() => {
-          appendMessage('ai', 'AI服务暂时不可用。');
-        });
-    }
+userInput.addEventListener('blur', function() {
+  this.parentElement.classList.remove('ring-4', 'ring-coral/20');
+});
   </script>
 </body>
 
