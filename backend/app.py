@@ -63,7 +63,8 @@ def chat():
     tool.log("进入 /chat 路由，收到请求...")
     try:
         # 获取用户消息
-        user_message = request.json.get('message', '')
+        json_data = request.get_json(silent=True)
+        user_message = json_data.get('message', '') if json_data else ''
         tool.log(f"用户消息: {user_message}")
         
         if not user_message:
