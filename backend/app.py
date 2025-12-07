@@ -3,19 +3,25 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import file
 import tool
+import config_api
+import json
+import os
 
 # ===========初始化==================
 
 # 创建Flask应用实例
 app = Flask(__name__, static_folder='../frontend', static_url_path='/')
 CORS(app)  # 启用CORS
+app.register_blueprint(config_api.config_api)
 
-# Deepseek API配置
-DEEPSEEK_API_URL = 'https://api.deepseek.com'
-DEEPSEEK_API_KEY = 'sk-a29e901493ee46e290f20696adbfa4a3'  # 请替换为你的API Key
- 
-# AI初始提示
-INIT_PROMPT = "嘿，京爷儿您来了，真地道,今儿吃点儿啥？ 想在食堂吃点啥呀？可以说说你现在在哪，或者赶不赶时间呢～"
+# 读取配置文件
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
+with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
+    config = json.load(f)
+
+DEEPSEEK_API_URL = config.get('DEEPSEEK_API_URL')
+DEEPSEEK_API_KEY = config.get('DEEPSEEK_API_KEY')
+INIT_PROMPT = config.get('INIT_PROMPT')
 
 client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_API_URL)
 

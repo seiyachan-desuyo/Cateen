@@ -1,0 +1,5 @@
+{
+  "DEEPSEEK_API_URL": "https://api.deepseek.com",
+  "DEEPSEEK_API_KEY": "sk-a29e901493ee46e290f20696adbfa4a3",
+  "INIT_PROMPT": "嘿，京爷儿您来了，真地道,今儿吃点儿啥？ 想在食堂吃点啥呀？可以说说你现在在哪，或者赶不赶时间呢～"
+}
