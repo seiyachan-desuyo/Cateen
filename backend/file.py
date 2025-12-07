@@ -5,11 +5,16 @@ import datetime
 
 class DataManager:
     def __init__(self, csv_path=None, log_path=None):
+        """初始化 DataManager，加载菜单数据和日志路径。
+        Args:
+            csv_path (str, optional): 菜单CSV文件路径。默认是项目根目录下的 '食堂数据S1.csv'。
+            log_path (str, optional): 会话日志CSV路径。
+        """
         # 默认 CSV 在项目根目录下的 '食堂数据.csv'
         if csv_path:
             self.csv_path = csv_path
         else:
-            self.csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '食堂数据 short.csv'))
+            self.csv_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '食堂数据S1.csv'))
 
         # 会话日志文件，保存在 backend 目录下
         if log_path:
@@ -21,13 +26,20 @@ class DataManager:
         self._load_menu()
 
     def _open_csv(self, path, mode='r'):
-        # 尝试使用 utf-8-sig 解码，失败则退回到 gbk（Windows 常见）
+        """以合适的编码方式打开CSV文件，兼容utf-8-sig和gbk。
+        Args:
+            path (str): 文件路径。
+            mode (str): 打开模式。
+        Returns:
+            file object: 打开的文件对象。
+        """
         try:
             return open(path, mode, encoding='utf-8-sig', newline='')
         except UnicodeDecodeError:
             return open(path, mode, encoding='gbk', newline='')
 
     def _load_menu(self):
+        """加载菜单数据到内存。"""
         self.menu_data = []
         if not os.path.exists(self.csv_path):
             return
@@ -37,6 +49,7 @@ class DataManager:
                 self.menu_data.append(row)
 
     def get_menu_as_string(self):
+        """以字符串形式返回当前菜单内容。"""
         if not self.menu_data:
             return '（当前菜单为空）'
 
@@ -62,7 +75,11 @@ class DataManager:
         return '\n'.join(lines)
 
     def log_conversation(self, speaker, text):
-        # 追加写入会话日志（CSV）: timestamp, speaker, text
+        """记录一条会话到日志文件。
+        Args:
+            speaker (str): 说话者（如user/ai）。
+            text (str): 对话内容。
+        """
         header = ['timestamp', 'speaker', 'text']
         exists = os.path.exists(self.log_path)
         with open(self.log_path, 'a', encoding='utf-8-sig', newline='') as f:
@@ -73,8 +90,13 @@ class DataManager:
             writer.writerow([ts, speaker, text])
 
     def add_dish(self, location, dish, price, tags=None):
-        # 向 CSV 追加一行，并刷新内存中的菜单
-        # 保证目录存在
+        """向菜单CSV添加一道新菜品，并刷新内存菜单。
+        Args:
+            location (str): 地点/窗口。
+            dish (str): 菜品名。
+            price (str|float): 价格。
+            tags (str, optional): 标签。
+        """
         csv_exists = os.path.exists(self.csv_path)
         # 默认列名为中文，若已有文件则使用已有字段顺序
         if csv_exists:
@@ -130,3 +152,4 @@ class DataManager:
 
         # 重新加载菜单
         self._load_menu()
+

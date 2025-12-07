@@ -5,18 +5,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🐱 贸小饭 - 吃好喝好睡好每一天！</title>
-  
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-  
+
   <!-- Google Fonts - 字体 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Quicksand:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
   <script>
     tailwind.config = {
       theme: {
@@ -36,7 +38,7 @@
       }
     }
   </script>
-  
+
   <style>
     body {
       font-family: 'Quicksand', 'Noto Sans SC', sans-serif;
@@ -48,14 +50,17 @@
     ::-webkit-scrollbar {
       width: 8px;
     }
+
     ::-webkit-scrollbar-track {
       background: #FFE4E1;
       border-radius: 10px;
     }
+
     ::-webkit-scrollbar-thumb {
       background: #FF8C69;
       border-radius: 10px;
     }
+
     ::-webkit-scrollbar-thumb:hover {
       background: #FF6B45;
     }
@@ -66,6 +71,7 @@
         opacity: 0;
         transform: translateY(10px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -78,8 +84,15 @@
 
     /* 悬浮动画 */
     @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
     }
 
     .float-animation {
@@ -88,8 +101,15 @@
 
     /* 脉搏动画 */
     @keyframes pulse-soft {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
     }
 
     .pulse-soft {
@@ -106,8 +126,13 @@
 
     /* 食物表情符号旋转 */
     @keyframes spin-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .spin-slow {
@@ -129,19 +154,20 @@
 </head>
 
 <body class="min-h-screen p-4">
-  
+
   <!-- 主容器 - 左右布局 -->
   <div class="w-full h-full flex gap-6 max-w-[1600px] mx-auto">
-    
+
     <!-- 左侧面板 - 品牌信息和美食展示 -->
     <div class="w-[400px] left-panel flex flex-col gap-6">
-      
+
       <!-- 品牌标题卡片 -->
-      <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border-4 border-coral/30 relative overflow-hidden">
+      <div
+        class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-8 border-4 border-coral/30 relative overflow-hidden">
         <!-- 背景装饰 -->
         <div class="absolute -top-10 -right-10 text-9xl opacity-10">🐱</div>
         <div class="absolute -bottom-10 -left-10 text-9xl opacity-10">🍜</div>
-        
+
         <div class="relative z-10">
           <div class="flex items-center justify-center gap-3 mb-4">
             <div class="text-7xl pulse-soft">🐱</div>
@@ -152,18 +178,21 @@
             对外经贸食堂智能美食推荐系统
             <i class="fas fa-sparkles"></i>
           </p>
-          
+
           <!-- 装饰性标签 -->
           <div class="space-y-2">
-            <div class="bg-gradient-to-r from-coral to-tangerine text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
+            <div
+              class="bg-gradient-to-r from-coral to-tangerine text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
               <i class="fas fa-robot text-xl"></i>
               <span>AI智能推荐系统</span>
             </div>
-            <div class="bg-gradient-to-r from-peach to-warmOrange text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
+            <div
+              class="bg-gradient-to-r from-peach to-warmOrange text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
               <i class="fas fa-heart text-xl"></i>
               <span>贴心美食管家</span>
             </div>
-            <div class="bg-gradient-to-r from-tangerine to-coral text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
+            <div
+              class="bg-gradient-to-r from-tangerine to-coral text-white px-4 py-3 rounded-2xl text-sm font-semibold shadow-md flex items-center gap-3">
               <i class="fas fa-utensils text-xl"></i>
               <span>你想吃啥我都帮你找</span>
             </div>
@@ -172,15 +201,17 @@
       </div>
 
       <!-- 美食展示卡片 -->
-      <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border-4 border-peach/30 flex-1 overflow-hidden">
+      <div
+        class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border-4 border-peach/30 flex-1 overflow-hidden">
         <h3 class="text-2xl font-bold text-coral mb-4 flex items-center gap-2">
           <i class="fas fa-fire"></i>
           今日推荐
         </h3>
-        
+
         <div class="space-y-4 overflow-y-auto h-[calc(100%-3rem)]">
           <!-- 美食卡片1 -->
-          <div class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105">
+          <div
+            class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105">
             <div class="flex items-start gap-4">
               <div class="text-5xl float-animation">🍱</div>
               <div class="flex-1">
@@ -201,7 +232,9 @@
           </div>
 
           <!-- 美食卡片2 -->
-          <div class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105" style="animation-delay: 0.1s;">
+          <div
+            class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105"
+            style="animation-delay: 0.1s;">
             <div class="flex items-start gap-4">
               <div class="text-5xl float-animation" style="animation-delay: 0.5s;">🍜</div>
               <div class="flex-1">
@@ -222,7 +255,9 @@
           </div>
 
           <!-- 美食卡片3 -->
-          <div class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105" style="animation-delay: 0.2s;">
+          <div
+            class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105"
+            style="animation-delay: 0.2s;">
             <div class="flex items-start gap-4">
               <div class="text-5xl float-animation" style="animation-delay: 1s;">🍙</div>
               <div class="flex-1">
@@ -243,7 +278,9 @@
           </div>
 
           <!-- 美食卡片4 -->
-          <div class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105" style="animation-delay: 0.3s;">
+          <div
+            class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105"
+            style="animation-delay: 0.3s;">
             <div class="flex items-start gap-4">
               <div class="text-5xl float-animation" style="animation-delay: 1.5s;">🍰</div>
               <div class="flex-1">
@@ -283,8 +320,9 @@
 
     <!-- 右侧聊天面板 -->
     <div class="flex-1 chat-panel">
-      <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border-4 border-peach/30 h-full flex flex-col">
-        
+      <div
+        class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border-4 border-peach/30 h-full flex flex-col">
+
         <!-- 聊天头部 -->
         <div class="bg-gradient-to-r from-coral via-tangerine to-warmOrange p-6 text-white flex-shrink-0">
           <div class="flex items-center gap-4">
@@ -320,37 +358,35 @@
         <div class="p-6 bg-gradient-to-r from-softPink/30 to-cream/30 border-t-2 border-peach/20 flex-shrink-0">
           <div class="flex gap-3 mb-4">
             <div class="flex-1 relative">
-              <input 
-                type="text" 
-                id="user-input" 
-                placeholder="告诉贸小饭您想吃什么呢... 🍜✨"
-                class="w-full px-6 py-4 rounded-2xl border-2 border-coral/30 focus:border-coral focus:outline-none focus:ring-4 focus:ring-coral/20 text-gray-700 font-medium shadow-md bg-white/90 backdrop-blur-sm transition-all"
-              >
+              <input type="text" id="user-input" placeholder="告诉贸小饭您想吃什么呢... 🍜✨"
+                class="w-full px-6 py-4 rounded-2xl border-2 border-coral/30 focus:border-coral focus:outline-none focus:ring-4 focus:ring-coral/20 text-gray-700 font-medium shadow-md bg-white/90 backdrop-blur-sm transition-all">
               <div class="absolute right-4 top-1/2 -translate-y-1/2 text-coral/40">
                 <i class="fas fa-comment-dots"></i>
               </div>
             </div>
-            <button 
-              id="send-btn"
-              class="px-8 py-4 bg-gradient-to-r from-coral to-tangerine text-white rounded-2xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2"
-            >
+            <button id="send-btn"
+              class="px-8 py-4 bg-gradient-to-r from-coral to-tangerine text-white rounded-2xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2">
               <i class="fas fa-paper-plane"></i>
               <span>发送</span>
             </button>
           </div>
-          
+
           <!-- 快捷建议按钮 -->
           <div class="flex gap-2 flex-wrap">
-            <button class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
+            <button
+              class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
               <i class="fas fa-fire"></i> 推荐今日特色
             </button>
-            <button class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
+            <button
+              class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
               <i class="fas fa-leaf"></i> 健康轻食
             </button>
-            <button class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
+            <button
+              class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
               <i class="fas fa-dollar-sign"></i> 预算友好
             </button>
-            <button class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
+            <button
+              class="quick-suggestion px-4 py-2 bg-white/80 hover:bg-coral hover:text-white rounded-full text-sm text-coral font-semibold transition-all shadow-sm border border-coral/30">
               <i class="fas fa-bolt"></i> 快速简餐
             </button>
           </div>
@@ -360,64 +396,63 @@
   </div>
 
   <script>
-  // 将硬编码的 localhost 改为动态获取
-const API_BASE_URL = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
-  ? 'http://localhost:5000'  // 开发环境
-  : '';  // 生产环境使用相对路径
+    // 将硬编码的 localhost 改为动态获取
+    const API_BASE_URL = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+      ? 'http://localhost:5000'  // 开发环境
+      : '';  // 生产环境使用相对路径
 
-const chatbox = document.getElementById('chatbox');
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const quickSuggestions = document.querySelectorAll('.quick-suggestion');
+    const chatbox = document.getElementById('chatbox');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const quickSuggestions = document.querySelectorAll('.quick-suggestion');
 
-// 初始化对话，AI先发起
-fetch(`${API_BASE_URL}/init`)
-  .then(res => {
-    if (!res.ok) throw new Error('网络错误');
-    return res.json();
-  })
-  .then(data => {
-    appendMessage('ai', data.reply);
-  })
-  .catch(error => {
-    console.error('初始化错误:', error);
-    appendMessage('ai', '喵~ 你好呀!我是贸小饭,今天想吃点什么呢?�✨');
-  });
+    // 初始化对话，AI先发起
+    fetch(`${API_BASE_URL}/init`)
+      .then(res => {
+        if (!res.ok) throw new Error('网络错误');
+        return res.json();
+      })
+      .then(data => {
+        appendMessage('ai', data.reply);
+      })
+      .catch(error => {
+        console.error('初始化错误:', error);
+        appendMessage('ai', '喵~ 你好呀!我是贸小饭,今天想吃点什么呢?�✨');
+      });
 
-sendBtn.onclick = sendMessage;
-userInput.addEventListener('keydown', function (e) {
-  if (e.key === 'Enter') sendMessage();
-});
+    sendBtn.onclick = sendMessage;
+    userInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') sendMessage();
+    });
+    // 快捷建议按钮
+    quickSuggestions.forEach(btn => {
+      btn.addEventListener('click', function () {
+        const text = this.textContent.trim().replace(/\s+/g, ' ');
+        userInput.value = text;
+        sendMessage();
+      });
+    });
 
-// 快捷建议按钮
-quickSuggestions.forEach(btn => {
-  btn.addEventListener('click', function() {
-    const text = this.textContent.trim().replace(/\s+/g, ' ');
-    userInput.value = text;
-    sendMessage();
-  });
-});
+    function appendMessage(role, text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message-bubble flex ${role === 'ai' ? 'justify-start' : 'justify-end'} mb-4`;
 
-function appendMessage(role, text) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = `message-bubble flex ${role === 'ai' ? 'justify-start' : 'justify-end'} mb-4`;
-  
-  // 转义HTML防止XSS攻击
-  const escapeHtml = (unsafe) => {
-    return unsafe
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;")
-      .replace(/\n/g, "<br>");  // 保留换行
-  };
-  
-  const safeText = escapeHtml(text);
-  const currentTime = new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
-  
-  if (role === 'ai') {
-    messageDiv.innerHTML = `
+      // 转义HTML防止XSS攻击
+      const escapeHtml = (unsafe) => {
+        return unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;")
+          .replace(/\n/g, "<br>");  // 保留换行
+      };
+
+      const safeText = escapeHtml(text);
+      const currentTime = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+
+      if (role === 'ai') {
+        messageDiv.innerHTML = `
       <div class="flex gap-3 max-w-[80%]">
         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-coral to-tangerine flex items-center justify-center text-xl shadow-lg flex-shrink-0">
           �
@@ -434,8 +469,8 @@ function appendMessage(role, text) {
         </div>
       </div>
     `;
-  } else {
-    messageDiv.innerHTML = `
+      } else {
+        messageDiv.innerHTML = `
       <div class="flex gap-3 max-w-[80%] flex-row-reverse">
         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-xl shadow-lg flex-shrink-0">
           😊
@@ -448,28 +483,28 @@ function appendMessage(role, text) {
         </div>
       </div>
     `;
-  }
-  
-  chatbox.appendChild(messageDiv);
-  chatbox.scrollTop = chatbox.scrollHeight;
-}
+      }
 
-function sendMessage() {
-  const message = userInput.value.trim();
-  if (!message) return;
-  
-  appendMessage('user', message);
-  userInput.value = '';
-  
-  // 禁用发送按钮防止重复发送
-  sendBtn.disabled = true;
-  sendBtn.style.opacity = '0.6';
-  
-  // 显示打字中提示
-  const typingDiv = document.createElement('div');
-  typingDiv.id = 'typing-indicator';
-  typingDiv.className = 'flex gap-3 mb-4';
-  typingDiv.innerHTML = `
+      chatbox.appendChild(messageDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      appendMessage('user', message);
+      userInput.value = '';
+
+      // 禁用发送按钮防止重复发送
+      sendBtn.disabled = true;
+      sendBtn.style.opacity = '0.6';
+
+      // 显示打字中提示
+      const typingDiv = document.createElement('div');
+      typingDiv.id = 'typing-indicator';
+      typingDiv.className = 'flex gap-3 mb-4';
+      typingDiv.innerHTML = `
     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-coral to-tangerine flex items-center justify-center text-xl shadow-lg">
       �
     </div>
@@ -481,44 +516,44 @@ function sendMessage() {
       </div>
     </div>
   `;
-  chatbox.appendChild(typingDiv);
-  chatbox.scrollTop = chatbox.scrollHeight;
-  
-  fetch(`${API_BASE_URL}/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message })
-  })
-    .then(res => {
-      if (!res.ok) throw new Error('请求失败');
-      return res.json();
-    })
-    .then(data => {
-      const typing = document.getElementById('typing-indicator');
-      if (typing) typing.remove();
-      appendMessage('ai', data.reply);
-    })
-    .catch(error => {
-      console.error('发送消息错误:', error);
-      const typing = document.getElementById('typing-indicator');
-      if (typing) typing.remove();
-      appendMessage('ai', '喵~ 抱歉,我现在有点忙不过来了,请稍后再试试吧~ 🙇‍♀️');
-    })
-    .finally(() => {
-      // 恢复发送按钮
-      sendBtn.disabled = false;
-      sendBtn.style.opacity = '1';
+      chatbox.appendChild(typingDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      fetch(`${API_BASE_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('请求失败');
+          return res.json();
+        })
+        .then(data => {
+          const typing = document.getElementById('typing-indicator');
+          if (typing) typing.remove();
+          appendMessage('ai', data.reply);
+        })
+        .catch(error => {
+          console.error('发送消息错误:', error);
+          const typing = document.getElementById('typing-indicator');
+          if (typing) typing.remove();
+          appendMessage('ai', '喵~ 抱歉,我现在有点忙不过来了,请稍后再试试吧~ 🙇‍♀️');
+        })
+        .finally(() => {
+          // 恢复发送按钮
+          sendBtn.disabled = false;
+          sendBtn.style.opacity = '1';
+        });
+    }
+
+    // 添加输入框焦点效果
+    userInput.addEventListener('focus', function () {
+      this.parentElement.classList.add('ring-4', 'ring-coral/20');
     });
-}
 
-// 添加输入框焦点效果
-userInput.addEventListener('focus', function() {
-  this.parentElement.classList.add('ring-4', 'ring-coral/20');
-});
-
-userInput.addEventListener('blur', function() {
-  this.parentElement.classList.remove('ring-4', 'ring-coral/20');
-});
+    userInput.addEventListener('blur', function () {
+      this.parentElement.classList.remove('ring-4', 'ring-coral/20');
+    });
   </script>
 </body>
 
