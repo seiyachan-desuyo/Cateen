@@ -2,6 +2,7 @@ import os
 import csv
 import datetime
 import tool
+import random
 
 class DataManager:
 
@@ -93,7 +94,6 @@ class DataManager:
 
     def random_dish(self):
         """随机推荐一个菜品（返回字典或空）。"""
-        import random
         if not self.menu_data:
             return None
         return random.choice(self.menu_data)

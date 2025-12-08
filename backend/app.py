@@ -6,6 +6,8 @@ import tool
 import config_api
 import json
 import os
+import random
+
 
 # ===========初始化==================
 
@@ -50,12 +52,14 @@ global_msg_history = [{"role": "system", "content": get_system_prompt()}]
 
 @app.route('/')
 def index():
-    tool.log("访问首页 /，返回 index.html")
+    tool.log("[访问首页 /]，返回 index.html")
     return app.send_static_file('index.html')
 
 @app.route('/random_dish', methods=['GET'])
 def random_dish():
     """随机推荐一个菜品，返回json。"""
+
+    tool.log("[进入 /random_dish 路由]，随机推荐一个菜品...")
     dish = data_manager.random_dish()
     tool.log(f"随机推荐菜品: {dish}")
     if dish:
@@ -63,9 +67,23 @@ def random_dish():
     else:
         return jsonify({'success': False, 'msg': '菜单为空，无法推荐'}), 404
 
+@app.route('/dish_samples', methods=['GET'])
+def dish_samples():
+    """返回菜单中随机抽取的3个菜品样本。"""
+
+    tool.log("获取菜单样本...")
+    menu = data_manager.menu_data or []
+    if not menu:
+        return jsonify({'success': False, 'msg': '菜单为空', 'samples': []}), 404
+    samples = random.sample(menu, min(3, len(menu)))
+
+    tool.log(f"随机抽取的菜品样本: {samples}")
+     
+    return jsonify({'success': True, 'samples': samples})
+
 @app.route('/chat', methods=['POST'])
 def chat():
-    tool.log("进入 /chat 路由，收到请求...")
+    tool.log("[进入 /chat 路由]，收到请求...")
     try:
         # 获取用户消息
         json_data = request.get_json(silent=True)
@@ -106,14 +124,14 @@ def chat():
 # 初始化对话，AI先发起 
 @app.route('/init', methods=['GET'])
 def init():
-    tool.log("进入 /init 路由，返回初始AI提示...")
+    tool.log("[进入 /init 路由]，返回初始AI提示...")
     return jsonify({"reply": INIT_PROMPT})
 
 
 @app.route('/reset', methods=['POST'])
 def reset():
     """重置对话历史和系统提示"""
-    tool.log("进入 /reset 路由，重置对话历史...")
+    tool.log("[进入 /reset 路由]，重置对话历史...")
     global global_msg_history
     global_msg_history = [{"role": "system", "content": get_system_prompt()}]
     tool.log("对话历史已重置。")
