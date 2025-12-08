@@ -91,6 +91,13 @@ class DataManager:
             lines.append(', '.join(row))
         return '\n'.join(lines)
 
+    def random_dish(self):
+        """随机推荐一个菜品（返回字典或空）。"""
+        import random
+        if not self.menu_data:
+            return None
+        return random.choice(self.menu_data)
+
     def get_menu_header(self, csv_path=None):
         """返回菜单表头（字段名数组）"""
         if(self.menu_data is None):  

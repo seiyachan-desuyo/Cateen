@@ -203,12 +203,13 @@
       <!-- 美食展示卡片 -->
       <div
         class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border-4 border-peach/30 flex-1 overflow-hidden">
-        <h3 class="text-2xl font-bold text-coral mb-4 flex items-center gap-2">
+        <h3 class="text-2xl font-bold text-coral mb-4 flex items-center gap-2" id="today-title">
           <i class="fas fa-fire"></i>
           今日推荐
         </h3>
-
-        <div class="space-y-4 overflow-y-auto h-[calc(100%-3rem)]">
+        <button id="random-btn"
+          class="ml-4 px-4 py-2 bg-coral text-white rounded-full font-bold shadow hover:bg-tangerine transition">随机推荐</button>
+        <div id="recommend-area" class="space-y-4 overflow-y-auto h-[calc(100%-3rem)]">
           <!-- 美食卡片1 -->
           <div
             class="bg-gradient-to-br from-softPink to-cream rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all cursor-pointer hover:scale-105">
@@ -399,8 +400,61 @@
     // 将硬编码的 localhost 改为动态获取
     const API_BASE_URL = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
       ? 'http://localhost:5000'  // 开发环境
-      : '';  // 生产环境使用相对路径
+      : '';
 
+    // 随机推荐功能集成
+    const randomBtn = document.getElementById('random-btn');
+    const recommendArea = document.getElementById('recommend-area');
+    let isRandomActive = false;
+    const defaultContent = recommendArea.innerHTML;
+
+    randomBtn.onclick = function () {
+      if (!isRandomActive) {
+        // 动画效果
+        recommendArea.innerHTML = `<div class='flex items-center justify-center h-40'><div class='animate-spin-slow text-6xl'>🍽️</div></div>`;
+        randomBtn.textContent = '返回默认推荐';
+        setTimeout(() => {
+          fetch(`${API_BASE_URL}/random_dish`)
+            .then(res => res.json())
+            .then(data => {
+              if (data.success && data.dish) {
+                showRandomDish(data.dish);
+              } else {
+                recommendArea.innerHTML = '<div class="text-center text-coral font-bold">菜单为空，无法推荐</div>';
+              }
+            })
+            .catch(() => {
+              recommendArea.innerHTML = '<div class="text-center text-coral font-bold">网络错误，无法获取推荐</div>';
+            });
+        }, 500);
+        isRandomActive = true;
+      } else {
+        recommendArea.innerHTML = defaultContent;
+        randomBtn.textContent = '随机推荐';
+        isRandomActive = false;
+      }
+    };
+
+    function showRandomDish(dish) {
+      // 格式化菜品信息为表格
+      let tableRows = '';
+      for (const key in dish) {
+        if (key && dish[key] && dish[key] !== '/') {
+          tableRows += `<tr><td class='font-bold text-coral pr-4 py-1'>${key}</td><td class='text-gray-700 py-1'>${dish[key]}</td></tr>`;
+        }
+      }
+      recommendArea.innerHTML = `
+        <div class='bg-gradient-to-br from-softPink to-cream rounded-2xl p-6 shadow-lg mt-2'>
+          <div class='flex items-center gap-4 mb-4'>
+            <div class='text-5xl float-animation'>🍽️</div>
+            <div class='text-xl font-bold text-coral'>随机推荐菜品</div>
+          </div>
+          <table class='w-full text-left'>${tableRows}</table>
+        </div>
+      `;
+    }
+
+    // 原有聊天等功能
     const chatbox = document.getElementById('chatbox');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');

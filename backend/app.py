@@ -53,6 +53,16 @@ def index():
     tool.log("访问首页 /，返回 index.html")
     return app.send_static_file('index.html')
 
+@app.route('/random_dish', methods=['GET'])
+def random_dish():
+    """随机推荐一个菜品，返回json。"""
+    dish = data_manager.random_dish()
+    tool.log(f"随机推荐菜品: {dish}")
+    if dish:
+        return jsonify({'success': True, 'dish': dish})
+    else:
+        return jsonify({'success': False, 'msg': '菜单为空，无法推荐'}), 404
+
 @app.route('/chat', methods=['POST'])
 def chat():
     tool.log("进入 /chat 路由，收到请求...")
