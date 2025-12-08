@@ -10,7 +10,6 @@ TODO ：
 1.通过git和github进行版本管理
 2.gitignore去除临时文件等
 3.python调用Deepseek API进行AI对话
-4.菜单参数非预制菜，并非通过prompt而是通过文件读入
 5.前端页面
 6.配置相关的内容如API key、初始prompt等，不放在app.py里 ，放入配置文件中或者让用户前台编辑
 1.CSV文件 存在表格文件里 方便读取写入 格式固定 方便扩展

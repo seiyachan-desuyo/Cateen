@@ -28,11 +28,6 @@ client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_API_URL)
 # 实例化 DataManager，从 CSV 读取菜单并记录会话
 data_manager = file.DataManager()
 
-
-
-
-
-
 def get_system_prompt():
     tool.log("调用 get_system_prompt，生成系统提示...")
     menu_str = data_manager.get_menu_as_string()

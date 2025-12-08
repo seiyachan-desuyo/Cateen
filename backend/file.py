@@ -4,8 +4,9 @@ import datetime
 import tool
 
 class DataManager:
+
     @staticmethod
-    def find_csv_file(csv_path=None):
+    def find_menu_file(csv_path=None):
         """查找菜单CSV文件,优先当前工作目录、项目根目录、常用文件名"""
         candidate_files = [
             csv_path,
@@ -22,15 +23,18 @@ class DataManager:
                 return os.path.abspath(f)
         raise FileNotFoundError("未找到菜单数据文件（如食堂数据S1.csv 或 食堂数据.csv），请将数据文件放在项目根目录或backend同级目录下！")
 
-    def __init__(self, csv_path=None, log_path=None):
+    def __init__(self, menu_path=None, log_path=None):
         """初始化 DataManager，加载菜单数据和日志路径。
         Args:
             csv_path (str, optional): 菜单CSV文件路径。
             log_path (str, optional): 会话日志CSV路径。
         """
 
+        # 菜单数据列表
+        self.menu_data = []
+
         # 智能查找菜单CSV文件路径
-        self.csv_path = self.find_csv_file(csv_path)
+        self.menu_path = self.find_menu_file(menu_path)
 
         # 会话日志文件，保存在 backend 目录下
         if log_path:
@@ -38,7 +42,7 @@ class DataManager:
         else:
             self.log_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'conversation_log.csv'))
 
-        self.menu_data = []
+        
 
         # 读取菜单路径下的菜单数据
         try:
@@ -64,9 +68,9 @@ class DataManager:
     def _load_menu(self):
         """加载菜单数据到内存。以CSV第一行作为表头和字段名。"""
         self.menu_data = []
-        if not os.path.exists(self.csv_path):
+        if not os.path.exists(self.menu_path):
             return
-        with self._open_csv(self.csv_path, 'r') as f:
+        with self._open_csv(self.menu_path, 'r') as f:
             # 读取第一行作为表头
             first_line = f.readline()
             fieldnames = [name.strip() for name in first_line.strip().split(',')]
@@ -87,16 +91,16 @@ class DataManager:
             lines.append(', '.join(row))
         return '\n'.join(lines)
 
-    @classmethod
-    def get_menu_header(cls, csv_path=None):
+    def get_menu_header(self, csv_path=None):
         """返回菜单表头（字段名数组）"""
-        path = cls.find_csv_file(csv_path)
-        with open(path, 'r', encoding='utf-8-sig') as f:
+        if(self.menu_data is None):  
+            self.menu_path = self.find_menu_file(csv_path)
+        with open(self.menu_path, 'r', encoding='utf-8-sig') as f:
             first_line = f.readline()
             return [name.strip() for name in first_line.strip().split(',')]
 
 
-
+#=================还没用的============
 
     def log_conversation(self, speaker, text):
         """记录一条会话到日志文件。
