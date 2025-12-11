@@ -116,8 +116,11 @@ def chat():
         
         return jsonify({"reply": ai_reply})
     
+    except ValueError as ve:
+        tool.log(f"/chat 路由ValueError: {str(ve)}", level="ERROR")
+        return jsonify({"reply": "喵~ 抱歉,输入有误，请检查后重试~ 🙇‍♀️"}), 400
     except Exception as e:
-        tool.log(f"/chat 路由异常: {str(e)}", level="ERROR")
+        tool.log(f"/chat Exception异常: {str(e)}", level="ERROR")
         return jsonify({"reply": "喵~ 抱歉,我现在有点忙不过来了,请稍后再试试吧~ 🙇‍♀️"}), 500
 
 
