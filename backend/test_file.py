@@ -43,6 +43,19 @@ class TestDataManager(unittest.TestCase):
         dm2 = DataManager(menu_path=empty_csv)
         self.assertIn("食堂",dm2.menu_data[0])
  
+    def test_get_distance(self):
+        print("[TestDataManager] test_get_distance: 测试楼间距离查询")
+        # 正常查询
+        dist = self.dm.get_distance('宁远楼', '一食堂')
+        self.assertEqual(dist, 2, "宁远楼到一食堂距离应为2")
+        dist = self.dm.get_distance('博学楼', '惠园餐厅')
+        self.assertEqual(dist, 1, "博学楼到惠园餐厅距离应为1")
+        # 异常查询（教学楼不存在）
+        dist = self.dm.get_distance('不存在的楼', '一食堂')
+        self.assertIsNone(dist, "不存在的教学楼应返回None")
+        # 异常查询（食堂不存在）
+        dist = self.dm.get_distance('宁远楼', '不存在的食堂')
+        self.assertIsNone(dist, "不存在的食堂应返回None")
 
 if __name__ == '__main__':
     unittest.main()

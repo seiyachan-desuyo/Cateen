@@ -1,26 +1,63 @@
 import os
 import csv
 import datetime
-import tool
 import random
+
+from tool import log
 
 class DataManager:
 
+
+    @staticmethod
+    def get_distance( building, canteen, distance_path=None):
+        """
+        查询指定教学楼到指定食堂的距离（1~5）。
+        Args:
+            building (str): 教学楼名
+            canteen (str): 食堂名
+            distance_path (str, optional): 距离表CSV路径
+        Returns:
+            int: 距离（1~5），未找到则返回 None
+        """
+        if not distance_path:
+            distance_path = os.path.join(os.path.dirname(__file__), 'distance_table.csv')
+        if not os.path.exists(distance_path):
+            log(f"[DataManager] 未找到距离表文件: {distance_path}", level="ERROR")
+            return None
+        with open(distance_path, 'r', encoding='utf-8-sig') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                if row['教学楼/食堂'] == building:
+                    try:
+                        return int(row.get(canteen, None))
+                    except (ValueError, TypeError):
+                        return None
+        return None
+    
     @staticmethod
     def find_menu_file(csv_path=None):
         """查找菜单CSV文件,优先当前工作目录、项目根目录、常用文件名"""
+        base_dir = os.path.abspath(os.path.dirname(__file__))
+        root_dir = os.path.abspath(os.path.join(base_dir, '..'))
+        backend_dir = os.path.join(root_dir, 'backend')
+
         candidate_files = [
             csv_path,
             os.path.join(os.getcwd(), '食堂数据S1.csv'),
             os.path.join(os.getcwd(), '食堂数据.csv'),
-            os.path.join(os.path.dirname(__file__), '..', '食堂数据S1.csv'),
-            os.path.join(os.path.dirname(__file__), '..', '食堂数据.csv'),
+            os.path.join(base_dir, '食堂数据S1.csv'),
+            os.path.join(base_dir, '食堂数据.csv'),
+            os.path.join(root_dir, '食堂数据S1.csv'),
+            os.path.join(root_dir, '食堂数据.csv'),
+            os.path.join(backend_dir, '食堂数据S1.csv'),
+            os.path.join(backend_dir, '食堂数据.csv'),
         ]
-        tool.log("[DataManager] 菜单数据文件查找顺序:", level="DEBUG")
+        
+        log("[DataManager] 菜单数据文件查找顺序:", level="DEBUG")
         for f in candidate_files:
-            tool.log(f"  尝试: {f} -> {'存在' if f and os.path.exists(f) else '不存在'}", level="DEBUG")
+            log(f"  尝试: {f} -> {'存在' if f and os.path.exists(f) else '不存在'}", level="DEBUG")
             if f and os.path.exists(f):
-                tool.log(f"[DataManager]选用菜单数据文件: {os.path.abspath(f)}", level="DEBUG")
+                log(f"[DataManager]选用菜单数据文件: {os.path.abspath(f)}", level="DEBUG")
                 return os.path.abspath(f)
         raise FileNotFoundError("未找到菜单数据文件（如食堂数据S1.csv 或 食堂数据.csv），请将数据文件放在项目根目录或backend同级目录下！")
 
@@ -48,9 +85,9 @@ class DataManager:
         # 读取菜单路径下的菜单数据
         try:
             self._load_menu()
-            tool.log(f"[DataManager][INFO] 菜单数据加载成功，共 {len(self.menu_data)} 条记录。", level="INFO")
+            log(f"[DataManager][INFO] 菜单数据加载成功，共 {len(self.menu_data)} 条记录。", level="INFO")
         except Exception as e:
-            tool.log(f"[DataManager][ERROR] 加载菜单数据失败: {e}", level="ERROR")
+            log(f"[DataManager][ERROR] 加载菜单数据失败: {e}", level="ERROR")
             self.menu_data = []
 
     def _open_csv(self, path, mode='r'):
@@ -105,6 +142,53 @@ class DataManager:
         with open(self.menu_path, 'r', encoding='utf-8-sig') as f:
             first_line = f.readline()
             return [name.strip() for name in first_line.strip().split(',')]
+
+
+    @staticmethod   
+    def get_building_and_canteen_list(distance_path=None):
+        """
+        从距离表CSV文件中获取教学楼列表和食堂列表。
+        Returns:
+            (building_list, canteen_list)
+        """
+        if not distance_path:
+            distance_path = os.path.join(os.path.dirname(__file__), 'distance_table.csv')
+        building_list = []
+        canteen_list = []
+        if not os.path.exists(distance_path):
+            return building_list, canteen_list
+        with open(distance_path, 'r', encoding='utf-8-sig') as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            canteen_list = header[1:]
+            for row in reader:
+                building_list.append(row[0])
+        return building_list, canteen_list
+    
+    
+    @staticmethod
+    def extract_distance_info(user_message, distance_path=None):
+        """
+        判断用户消息中是否包含教学楼，并返回该楼到所有食堂的距离。
+        Returns:
+            (found_building, canteen_distances, distance_info)
+        """
+        building_list, canteen_list = DataManager.get_building_and_canteen_list(distance_path)
+        found_building = None
+        for b in building_list:
+            if b in user_message:
+                found_building = b
+                break
+        canteen_distances = {}
+        distance_info = None
+        if found_building:
+            info_lines = []
+            for c in canteen_list:
+                distance = DataManager.get_distance(found_building, c, distance_path)
+                canteen_distances[c] = distance
+                info_lines.append(f"{found_building} 到 {c} 距离为 {distance}")
+            distance_info = "【距离提示】\n" + "\n".join(info_lines)
+        return found_building, canteen_distances, distance_info
 
 
 #=================还没用的============

@@ -1,7 +1,6 @@
 import inspect
 import os
 
-
 def log(message: str, level: str = "INFO"):
     """
     日志输出，仅在DEBUG及以上等级时打印文件名、方法名和行号。
@@ -18,3 +17,4 @@ def log(message: str, level: str = "INFO"):
         print(f"[{level}] [{os.path.basename(filename)}::{funcname}:{lineno}] {message}")
     else:
         print(f"[{level}] {message}")
+ 
