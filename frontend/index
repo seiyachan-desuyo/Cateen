@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐱 贸小饭 - 暖呼呼的美食向导</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            mikan: '#FF9F43',        // 蜜柑橙
+            mikanPop: '#FF6B6B',     // 珊瑚红
+            cream: '#FFF9E6',        // 奶油黄
+            honey: '#FFD32A',        // 蜂蜜黄
+            leaf: '#2ED573',         // 薄荷绿
+            choco: '#5D4037',        // 巧克力色
+            latte: '#A1887F',        // 拿铁色
+          },
+          fontFamily: {
+            'sans': ['Zen Maru Gothic', 'sans-serif'],
+          },
+          boxShadow: {
+            'warm': '0 8px 24px rgba(255, 159, 67, 0.25)',
+            'inner-glow': 'inset 0 0 20px rgba(255, 159, 67, 0.1)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* === 全局设定 === */
+    body {
+      font-family: 'Zen Maru Gothic', sans-serif;
+      color: #5D4037;
+      background-color: #FFF9E6;
+      overflow: hidden;
+    }
+
+    /* === 动态波点背景 === */
+    .bg-pattern {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background-image: 
+        radial-gradient(#FF9F43 15%, transparent 16%), 
+        radial-gradient(#FFD32A 15%, transparent 16%);
+      background-size: 50px 50px;
+      background-position: 0 0, 25px 25px;
+      opacity: 0.15;
+      z-index: -2;
+      animation: bgScroll 40s linear infinite;
+    }
+
+    @keyframes bgScroll {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-50px, -50px); }
+    }
+
+    /* === 漂浮的 Emoji === */
+    .floating-emojis {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .emoji-item {
+      position: absolute;
+      font-size: 2.5rem;
+      opacity: 0.7;
+      filter: drop-shadow(0 4px 6px rgba(255, 159, 67, 0.2));
+      animation: floatUp 20s linear infinite;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(110vh) rotate(0deg) scale(0.8); opacity: 0; }
+      100% { transform: translateY(-10vh) rotate(360deg) scale(1.1); opacity: 0; }
+    }
+
+    /* === 玻璃卡片 === */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 40px rgba(255, 159, 67, 0.15);
+    }
+
+    /* === 动画效果 === */
+    .btn-bouncy { transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .btn-bouncy:hover { transform: scale(1.05) rotate(-2deg); }
+    .btn-bouncy:active { transform: scale(0.95); }
+
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .msg-anim { animation: slideUpFade 0.4s ease-out forwards; }
+
+    /* 抽奖高亮闪烁 */
+    @keyframes highlight-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); border-color: #FF9F43; }
+      70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); border-color: #FF6B6B; }
+      100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); border-color: #FF9F43; }
+    }
+    .lottery-highlight {
+      animation: highlight-pulse 1s infinite;
+      background: linear-gradient(135deg, #FFF 0%, #FFF9E6 100%);
+    }
+
+    /* 滚动条 */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #FFCC80; border-radius: 10px; }
+
+    .full-h { height: calc(100vh - 3rem); }
+  </style>
+</head>
+
+<body class="p-6 h-screen flex items-center justify-center">
+
+  <div class="bg-pattern"></div>
+  <div class="floating-emojis" id="emoji-bg"></div>
+
+  <div class="w-full max-w-[1500px] h-full flex gap-6">
+
+    <div class="w-[400px] flex flex-col gap-6 full-h">
+      
+      <div class="glass-card rounded-[3rem] p-8 relative overflow-hidden group hover:shadow-warm transition-all">
+        <div class="absolute -top-12 -right-12 w-40 h-40 bg-gradient-to-br from-mikan to-mikanPop rounded-full opacity-20 blur-2xl group-hover:scale-125 transition-transform duration-700"></div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center text-5xl shadow-lg mb-4 border-4 border-cream animate-[bounce_3s_infinite]">
+            🐱
+          </div>
+          <h1 class="text-5xl font-black text-mikanPop tracking-wider mb-2 drop-shadow-sm">贸小饭</h1>
+          <p class="text-latte font-bold bg-white/60 px-4 py-1 rounded-full text-sm">
+            <i class="fas fa-utensils text-mikan mr-1"></i> UIBE 智能美食管家
+          </p>
+        </div>
+      </div>
+
+      <div class="glass-card rounded-[3rem] flex-1 flex flex-col overflow-hidden relative">
+        <div class="p-6 pb-2 flex justify-between items-center z-10">
+          <h3 class="text-2xl font-bold text-choco flex items-center gap-2" id="recommend-title">
+            <span class="text-3xl">🔥</span> 今日热推
+          </h3>
+          <button id="random-btn" class="btn-bouncy bg-mikan text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:shadow-warm transition-colors">
+            <i class="fas fa-random"></i> 随机推荐
+          </button>
+        </div>
+
+        <div id="recommend-area" class="flex-1 overflow-y-auto p-4 space-y-3">
+          <div class="default-list space-y-3">
+            <div class="bg-white p-4 rounded-[2rem] border-2 border-transparent hover:border-mikan transition-all shadow-sm cursor-pointer group hover:bg-cream">
+              <div class="flex items-center gap-4">
+                <div class="text-4xl">🥘</div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-choco text-lg">一食堂麻辣香锅</h4>
+                  <p class="text-xs text-latte mt-1">自选食材，微辣更香</p>
+                </div>
+                <div class="text-mikanPop font-black text-xl">¥22</div>
+              </div>
+            </div>
+            
+            <div class="bg-white p-4 rounded-[2rem] border-2 border-transparent hover:border-mikan transition-all shadow-sm cursor-pointer group hover:bg-cream">
+              <div class="flex items-center gap-4">
+                <div class="text-4xl">🍜</div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-choco text-lg">清真牛肉面</h4>
+                  <p class="text-xs text-latte mt-1">汤头浓郁，面条劲道</p>
+                </div>
+                <div class="text-mikanPop font-black text-xl">¥14</div>
+              </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-[2rem] border-2 border-transparent hover:border-mikan transition-all shadow-sm cursor-pointer group hover:bg-cream">
+              <div class="flex items-center gap-4">
+                <div class="text-4xl">🌭</div>
+                <div class="flex-1">
+                  <h4 class="font-bold text-choco text-lg">虹远楼下烤肠</h4>
+                  <p class="text-xs text-latte mt-1">滋滋冒油，解馋神器</p>
+                </div>
+                <div class="text-mikanPop font-black text-xl">¥5</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="h-8 bg-gradient-to-t from-white/80 to-transparent absolute bottom-0 w-full pointer-events-none"></div>
+      </div>
+    </div>
+
+    <div class="flex-1 full-h flex flex-col glass-card rounded-[3rem] overflow-hidden relative">
+      <div class="bg-white/80 backdrop-blur-md p-6 border-b-2 border-cream flex justify-between items-center z-10 shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <div class="w-14 h-14 bg-gradient-to-br from-mikan to-mikanPop rounded-full flex items-center justify-center text-2xl text-white shadow-md border-2 border-white">
+              🐱
+            </div>
+            <div class="absolute bottom-0 right-0 w-4 h-4 bg-leaf rounded-full border-2 border-white animate-pulse"></div>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black text-choco">Mao Xiao Fan</h2>
+            <p class="text-sm text-mikan font-bold flex items-center gap-1">
+              <i class="fas fa-sun animate-spin-slow"></i> 在线 · 肚子饿了吗？
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="chatbox" class="flex-1 overflow-y-auto p-8 space-y-6 bg-cream/30"></div>
+
+      <div class="p-6 bg-white/80 border-t-2 border-cream z-10">
+        <div class="flex gap-3 mb-4 overflow-x-auto pb-1 no-scrollbar">
+          <button class="quick-suggestion btn-bouncy px-4 py-2 bg-cream border border-mikan/30 text-mikan rounded-full text-sm font-bold hover:bg-mikan hover:text-white">🥪 赶时间</button>
+          <button class="quick-suggestion btn-bouncy px-4 py-2 bg-cream border border-mikanPop/30 text-mikanPop rounded-full text-sm font-bold hover:bg-mikanPop hover:text-white">🌶️ 吃辣</button>
+          <button class="quick-suggestion btn-bouncy px-4 py-2 bg-cream border border-honey/50 text-orange-400 rounded-full text-sm font-bold hover:bg-honey hover:text-white">💰 省钱</button>
+        </div>
+
+        <div class="relative flex items-center">
+          <input type="text" id="user-input" placeholder="输入你想吃的，比如：热乎乎的面条..." 
+            class="w-full bg-cream/50 border-2 border-transparent focus:border-mikan focus:bg-white text-choco placeholder-latte px-6 py-4 rounded-[2rem] text-lg outline-none transition-all shadow-inner font-medium pr-20">
+          <button id="send-btn" class="absolute right-2 w-14 h-12 bg-gradient-to-r from-mikan to-mikanPop text-white rounded-[1.5rem] shadow-warm hover:shadow-lg hover:scale-105 transition-all flex items-center justify-center text-xl">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 动态判断后端地址
+    const API_BASE_URL = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+      ? 'http://localhost:5000' 
+      : '';
+
+    // === 背景装饰 ===
+    const emojis = ['🍊', '🍤', '🍘', '🍥', '🍮', '🍲', '🍱', '🍔', '🥟', '🥤'];
+    const emojiContainer = document.getElementById('emoji-bg');
+    for(let i=0; i<20; i++) {
+      const el = document.createElement('div');
+      el.className = 'emoji-item';
+      el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 95 + 'vw';
+      const size = Math.random() * 1.5 + 1.5; 
+      el.style.fontSize = size + 'rem';
+      el.style.animationDuration = (Math.random() * 15 + 15) + 's';
+      el.style.animationDelay = (Math.random() * 10) + 's';
+      emojiContainer.appendChild(el);
+    }
+
+    // === 随机推荐逻辑 (已恢复后端连接) ===
+    const randomBtn = document.getElementById('random-btn');
+    const recommendArea = document.getElementById('recommend-area');
+    const recommendTitle = document.getElementById('recommend-title');
+    let isRandomActive = false;
+    let defaultContent = recommendArea.innerHTML; // 保存默认列表
+
+    // 辅助函数：将 CSV/JSON 数据渲染为新版卡片样式
+    function renderDishCard(dish, isHighlight = false) {
+      // 过滤掉空值或'/'
+      let detailsHtml = '';
+      for (const key in dish) {
+        if (key && dish[key] && dish[key] !== '/' && key !== '菜名' && key !== '价格') {
+           detailsHtml += `
+             <div class="flex justify-between text-sm py-1 border-b border-cream last:border-0">
+               <span class="text-latte font-bold">${key}</span>
+               <span class="text-choco">${dish[key]}</span>
+             </div>
+           `;
+        }
+      }
+
+      // 获取菜名和价格 (假设后端返回字段包含这些，如果没有则显示通用)
+      const dishName = dish['菜名'] || dish['名称'] || '美味佳肴';
+      const dishPrice = dish['价格'] || '时价';
+
+      // 根据是否高亮决定样式
+      const cardClass = isHighlight 
+        ? 'bg-white border-4 border-mikanPop shadow-warm transform scale-105 transition-all duration-300' 
+        : 'bg-white/80 border-2 border-white hover:border-mikan';
+
+      return `
+        <div class="p-6 rounded-[2.5rem] ${cardClass} flex flex-col gap-3 relative overflow-hidden">
+          ${isHighlight ? '<div class="absolute top-0 right-0 bg-mikanPop text-white text-xs px-3 py-1 rounded-bl-xl font-bold">天选之菜</div>' : ''}
+          
+          <div class="flex items-center gap-4 mb-2">
+            <div class="w-14 h-14 bg-cream rounded-full flex items-center justify-center text-3xl shadow-inner">
+              ${isHighlight ? '🎉' : '🍽️'}
+            </div>
+            <div class="flex-1">
+              <h4 class="font-black text-xl text-choco tracking-wide">${dishName}</h4>
+              <div class="text-mikanPop font-bold text-lg mt-1">¥${dishPrice}</div>
+            </div>
+          </div>
+
+          <div class="bg-cream/50 rounded-2xl p-4 space-y-1">
+            ${detailsHtml || '<div class="text-center text-latte text-sm">暂无详细信息</div>'}
+          </div>
+        </div>
+      `;
+    }
+
+    randomBtn.onclick = function () {
+      if (!isRandomActive) {
+        // 1. 切换状态
+        randomBtn.innerHTML = '<i class="fas fa-undo"></i> 返回列表';
+        randomBtn.classList.replace('bg-mikan', 'bg-latte');
+        recommendTitle.innerHTML = '<span class="text-3xl animate-spin">🎲</span> 正在抽签...';
+        
+        let demoDishes = [];
+        let idx = 0;
+
+        // 2. 请求后端样本数据
+        fetch(`${API_BASE_URL}/dish_samples`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.success && data.samples && data.samples.length > 0) {
+              demoDishes = data.samples;
+              
+              // 3. 启动抽奖动画 (由快变慢)
+              let steps = 20; // 总步数
+              let baseInterval = 50; 
+              let maxInterval = 400;
+              let currentStep = 0;
+
+              function lotteryLoop() {
+                idx = (idx + 1) % demoDishes.length;
+                // 渲染过程中的样本 (不需高亮)
+                recommendArea.innerHTML = renderDishCard(demoDishes[idx], false);
+
+                // 计算下一次间隔 (Ease-out 效果)
+                let nextInterval = baseInterval + (maxInterval - baseInterval) * Math.pow(currentStep / steps, 2);
+
+                if (currentStep < steps) {
+                  currentStep++;
+                  setTimeout(lotteryLoop, nextInterval);
+                } else {
+                  // 4. 动画结束，请求最终结果
+                  fetch(`${API_BASE_URL}/random_dish`)
+                    .then(res => res.json())
+                    .then(finalData => {
+                      if (finalData.success && finalData.dish) {
+                        recommendTitle.innerHTML = '<span class="text-3xl">✨</span> 既然是你';
+                        recommendArea.innerHTML = renderDishCard(finalData.dish, true); // 开启高亮
+                        
+                        // 添加烟花/庆祝效果 (可选)
+                        const celebrate = document.createElement('div');
+                        celebrate.className = 'absolute inset-0 pointer-events-none z-0 flex justify-center items-center text-6xl opacity-20 animate-pulse';
+                        celebrate.innerText = '🎊';
+                        recommendArea.appendChild(celebrate);
+
+                      } else {
+                        recommendArea.innerHTML = '<div class="text-center text-mikanPop font-bold p-10">菜单可能被喵星人偷走了...</div>';
+                      }
+                    })
+                    .catch(err => {
+                      console.error(err);
+                      recommendArea.innerHTML = '<div class="text-center text-latte font-bold p-10">网络开小差了喵...</div>';
+                    });
+                }
+              }
+              lotteryLoop();
+            } else {
+              recommendArea.innerHTML = '<div class="text-center text-latte p-10">数据好像为空哦</div>';
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            recommendArea.innerHTML = '<div class="text-center text-latte p-10">连接后端失败喵 (请检查 Python 是否运行)</div>';
+          });
+
+        isRandomActive = true;
+      } else {
+        // 恢复默认状态
+        recommendArea.innerHTML = defaultContent;
+        randomBtn.innerHTML = '<i class="fas fa-random"></i> 随机推荐';
+        randomBtn.classList.replace('bg-latte', 'bg-mikan');
+        recommendTitle.innerHTML = '<span class="text-3xl">🔥</span> 今日热推';
+        isRandomActive = false;
+      }
+    };
+
+    // === 聊天功能 ===
+    const chatbox = document.getElementById('chatbox');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    // 页面初始化欢迎
+    fetch(`${API_BASE_URL}/init`)
+      .then(res => res.json())
+      .then(data => appendMessage('ai', data.reply))
+      .catch(() => appendMessage('ai', '喵呜~ 欢迎来到贸小饭！🍊\n今天想吃点什么暖乎乎的东西？'));
+
+    sendBtn.onclick = sendMessage;
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    document.querySelectorAll('.quick-suggestion').forEach(btn => {
+      btn.addEventListener('click', function() {
+        userInput.value = this.innerText.split(' ')[1];
+        sendMessage();
+      });
+    });
+
+    function appendMessage(role, text) {
+      const msgDiv = document.createElement('div');
+      const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+      const safeText = text.replace(/\n/g, '<br>');
+
+      if (role === 'ai') {
+        msgDiv.className = 'flex gap-4 msg-anim';
+        msgDiv.innerHTML = `
+          <div class="w-11 h-11 rounded-full bg-gradient-to-br from-mikan to-mikanPop border-4 border-white flex items-center justify-center text-xl shadow-sm flex-shrink-0 mt-1">🐱</div>
+          <div class="flex flex-col gap-1 max-w-[80%]">
+             <span class="text-xs text-mikan font-bold ml-2">贸小饭</span>
+             <div class="bg-white p-5 rounded-[2rem] rounded-tl-none shadow-sm text-choco leading-relaxed border border-cream relative">
+                ${safeText}
+             </div>
+             <span class="text-[10px] text-latte ml-2">${time}</span>
+          </div>
+        `;
+      } else {
+        msgDiv.className = 'flex flex-row-reverse gap-4 msg-anim';
+        msgDiv.innerHTML = `
+          <div class="w-11 h-11 rounded-full bg-cream border-4 border-white flex items-center justify-center text-xl shadow-sm flex-shrink-0 mt-1">😋</div>
+          <div class="flex flex-col gap-1 items-end max-w-[80%]">
+             <span class="text-xs text-latte mr-2">我</span>
+             <div class="bg-gradient-to-br from-mikan to-mikanPop text-white p-5 rounded-[2rem] rounded-tr-none shadow-warm leading-relaxed">
+                ${safeText}
+             </div>
+             <span class="text-[10px] text-latte mr-2">${time}</span>
+          </div>
+        `;
+      }
+      chatbox.appendChild(msgDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      appendMessage('user', text);
+      userInput.value = '';
+
+      const loadingId = 'loading-' + Date.now();
+      const loadingDiv = document.createElement('div');
+      loadingDiv.id = loadingId;
+      loadingDiv.className = 'flex gap-4 msg-anim';
+      loadingDiv.innerHTML = `
+        <div class="w-11 h-11 rounded-full bg-mikan border-4 border-white flex items-center justify-center text-xl shadow-sm flex-shrink-0 mt-1">🐱</div>
+        <div class="bg-white p-4 rounded-[2rem] rounded-tl-none shadow-sm border border-cream flex items-center gap-2">
+           <span class="w-2 h-2 bg-mikan rounded-full animate-bounce"></span>
+           <span class="w-2 h-2 bg-mikan rounded-full animate-bounce" style="animation-delay: 0.1s"></span>
+           <span class="w-2 h-2 bg-mikan rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+        </div>
+      `;
+      chatbox.appendChild(loadingDiv);
+      chatbox.scrollTop = chatbox.scrollHeight;
+
+      fetch(`${API_BASE_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById(loadingId).remove();
+        appendMessage('ai', data.reply);
+      })
+      .catch(err => {
+        document.getElementById(loadingId).remove();
+        appendMessage('ai', '呜呜，连接后端失败了... 可能是服务没启动？🍊');
+      });
+    }
+  </script>
+</body>
+</html>
